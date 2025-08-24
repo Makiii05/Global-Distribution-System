@@ -123,26 +123,53 @@ if (isset($_POST["Schedule"])) {
           </tr>
         </thead>
         <tbody>
-          <?PHP if($data->num_rows == 0) { ?>
-            <tr><td colspan="8" class="text-center text-muted">No matching records found.</td></tr>        
-          <?PHP }?>
-          <?PHP while($row=$data->fetch_assoc()){ ?>
-          <tr class="table-row-hover">
-            <td style="white-space: nowrap;"><?= $row["auid"] ?></td>
-            <td style="white-space: nowrap;"><?= $row["frid"] ?></td>
-            <td style="white-space: nowrap;"><?= $row["date_departure"] ?></td>
-            <td style="white-space: nowrap;"><?= $row["time_departure"] ?></td>
-            <td style="white-space: nowrap;"><?= $row["date_arrival"] ?></td>
-            <td style="white-space: nowrap;"><?= $row["time_arrival"] ?></td>
-            <td style="white-space: nowrap;"><?= $row["status"] ?></td>
-            <?PHP if(($_SESSION["user_id"] == $row['auid']) && isset($_SESSION["user_type"]) ){ ?>
-            <td class="text-center" style="white-space: nowrap;">
-              <?php include("components/action.php")?>
-            </td>
-            <?PHP }?>
-          </tr>
-          <?PHP }?>
-        </tbody>
+<?PHP if($data->num_rows == 0) { ?>
+  <tr><td colspan="8" class="text-center text-muted">No matching records found.</td></tr>        
+<?PHP } ?>
+<?PHP while($row=$data->fetch_assoc()){ ?>
+<tr class="table-row-hover">
+
+  <!-- Airline User -->
+  <td style="white-space: nowrap;">
+    <?= getForeignValue("tblairlineuser", "user", "id", $row["auid"]) ?>
+  </td>
+
+  <!-- Flight Route (Airline + Airports) -->
+  <td style="white-space: nowrap;">
+    <?php
+      // First fetch airline ID, origin airport, destination airport from route
+      $sql = "SELECT a.airline_name, o.airport_name AS origin, d.airport_name AS dest
+              FROM tblflightroute fr
+              LEFT JOIN tblairline a ON fr.aid = a.id
+              LEFT JOIN tblairport o ON fr.oapid = o.id
+              LEFT JOIN tblairport d ON fr.dapid = d.id
+              WHERE fr.id = ?";
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param("i", $row["frid"]);
+      $stmt->execute();
+      $stmt->bind_result($airlineName, $origin, $dest);
+      $stmt->fetch();
+      $stmt->close();
+      echo $airlineName ? "$airlineName ($origin → $dest)" : $row["frid"];
+    ?>
+  </td>
+
+  <!-- Dates & Times -->
+  <td style="white-space: nowrap;"><?= $row["date_departure"] ?></td>
+  <td style="white-space: nowrap;"><?= $row["time_departure"] ?></td>
+  <td style="white-space: nowrap;"><?= $row["date_arrival"] ?></td>
+  <td style="white-space: nowrap;"><?= $row["time_arrival"] ?></td>
+  <td style="white-space: nowrap;"><?= ucfirst($row["status"]) ?></td>
+
+  <?PHP if(($_SESSION["user_id"] == $row['auid']) && isset($_SESSION["user_type"]) ){ ?>
+  <td class="text-center" style="white-space: nowrap;">
+    <?php include("components/action.php")?>
+  </td>
+  <?PHP } ?>
+</tr>
+<?PHP } ?>
+</tbody>
+
       </table>
     </div>
   </div>

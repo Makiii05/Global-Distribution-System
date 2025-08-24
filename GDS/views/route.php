@@ -101,23 +101,43 @@ if (isset($_POST["Route"])) {
           </tr>
         </thead>
         <tbody>
-          <?PHP if($data->num_rows == 0) { ?>
-            <tr><td colspan="6" class="text-center text-muted">No matching records found.</td></tr>        
-          <?PHP }?>
-          <?PHP while($row=$data->fetch_assoc()){ ?>
-          <tr class="table-row-hover">
-            <td style="white-space: nowrap;"><?= $row["aid"] ?></td>
-            <td style="white-space: nowrap;"><?= $row["oapid"] ?></td>
-            <td style="white-space: nowrap;"><?= $row["dapid"] ?></td>
-            <td style="white-space: nowrap;"><?= ($row["round_trip"] == 1) ? "Yes" : "No" ?></td>
-            <td style="white-space: nowrap;"><?= $row["acid"] ?></td>
-            <?PHP if(isset($_SESSION["user_aid"]) == $row['aid']){ ?>
-            <td class="text-center" style="white-space: nowrap;">
-              <?php include("components/action.php")?>
-            </td>
-            <?PHP }?>
-          </tr>
-          <?PHP }?>
+        <?php if($data->num_rows == 0) { ?>
+          <tr><td colspan="6" class="text-center text-muted">No matching records found.</td></tr>        
+        <?php } ?>
+        <?php while($row=$data->fetch_assoc()){ ?>
+        <tr class="table-row-hover">
+          <!-- Airline Name -->
+          <td style="white-space: nowrap;">
+            <?= getForeignValue("tblairline", "airline_name", "id", $row["aid"]) ?>
+          </td>
+
+          <!-- Origin Airport -->
+          <td style="white-space: nowrap;">
+            <?= getForeignValue("tblairport", "airport_name", "id", $row["oapid"]) ?>
+          </td>
+
+          <!-- Destination Airport -->
+          <td style="white-space: nowrap;">
+            <?= getForeignValue("tblairport", "airport_name", "id", $row["dapid"]) ?>
+          </td>
+
+          <!-- Round Trip -->
+          <td style="white-space: nowrap;">
+            <?= ($row["round_trip"] == 1) ? "Yes" : "No" ?>
+          </td>
+
+          <!-- Aircraft Model -->
+          <td style="white-space: nowrap;">
+            <?= getForeignValue("tblaircraft", "model", "id", $row["acid"]) ?>
+          </td>
+
+          <?php if(isset($_SESSION["user_aid"]) && $_SESSION["user_aid"] == $row['aid']){ ?>
+          <td class="text-center" style="white-space: nowrap;">
+            <?php include("components/action.php")?>
+          </td>
+          <?php } ?>
+        </tr>
+        <?php } ?>
         </tbody>
       </table>
     </div>

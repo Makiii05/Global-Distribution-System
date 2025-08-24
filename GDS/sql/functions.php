@@ -67,3 +67,15 @@ function logout(){
     // Destroy the session
     session_destroy();
 }
+function getForeignValue($table, $column, $idColumn, $id) {
+    global $conn;
+    if (!$id) return null;
+    $sql = "SELECT $column FROM $table WHERE $idColumn = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->bind_result($value);
+    $stmt->fetch();
+    $stmt->close();
+    return $value ?? $id; // fallback: show ID if no match
+}
