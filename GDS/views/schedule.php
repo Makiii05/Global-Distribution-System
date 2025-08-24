@@ -27,7 +27,7 @@ if (isset($_POST["Schedule"])) {
       <input type="hidden" name="Schedule">
 
       <div class="mb-3">
-        <label class="form-label fw-bold text-dark"><i class="bi bi-person-vcard me-1"></i> AUID</label>
+        <label class="form-label fw-bold text-dark"><i class="bi bi-person-vcard me-1"></i> Airline User</label>
         <div class="input-group shadow-sm">
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="auid" name="auid" value="">
@@ -37,12 +37,25 @@ if (isset($_POST["Schedule"])) {
       </div>
 
       <div class="mb-3">
-        <label class="form-label fw-bold text-dark"><i class="bi bi-upc-scan me-1"></i> FRID</label>
+        <label class="form-label fw-bold text-dark"><i class="bi bi-upc-scan me-1"></i> Flight Route</label>
         <div class="input-group shadow-sm">
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="frid" name="frid" value="">
           </div>
-          <input type="text" class="form-control border-dark" id="fridValue">
+          <select class="form-control border-dark" id="fridValue">
+            <?php
+              $sql = "SELECT fr.id, a.airline_name, o.airport_name AS origin, d.airport_name AS dest
+                      FROM tblflightroute fr
+                      LEFT JOIN tblairline a ON fr.aid = a.id
+                      LEFT JOIN tblairport o ON fr.oapid = o.id
+                      LEFT JOIN tblairport d ON fr.dapid = d.id";
+              $routes = $conn->query($sql);
+              while ($route = $routes->fetch_assoc()) {
+                  $label = "{$route['airline_name']} ({$route['origin']} → {$route['dest']})";
+                  echo "<option value='{$route['id']}'>$label</option>";
+              }
+            ?>
+          </select>
         </div>
       </div>
 
@@ -110,8 +123,8 @@ if (isset($_POST["Schedule"])) {
       <table class="table table-bordered border-dark align-middle shadow-sm rounded-3">
         <thead class="table-dark sticky-top">
           <tr>
-            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-person-vcard"></i> AUID</th>
-            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-upc-scan"></i> FRID</th>
+            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-person-vcard"></i> Airline User</th>
+            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-upc-scan"></i> Flight Route</th>
             <th style="min-width: 140px; white-space: nowrap;"><i class="bi bi-calendar-date"></i> Date Departure</th>
             <th style="min-width: 140px; white-space: nowrap;"><i class="bi bi-clock"></i> Time Departure</th>
             <th style="min-width: 130px; white-space: nowrap;"><i class="bi bi-calendar-check"></i> Date Arrival</th>

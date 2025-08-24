@@ -106,7 +106,7 @@ if (isset($_POST["Airport"])) {
             <th style="min-width: 180px; white-space: nowrap;"><i class="bi bi-geo-alt"></i> Location Serve</th>
             <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-clock"></i> Time</th>
             <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-brightness-high"></i> DST</th>
-            <?PHP if($_SESSION["user_role"]=="admin"){ ?>
+            <?PHP if(isset($_SESSION["user_role"]) && $_SESSION["user_role"]=="admin"){ ?>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-gear"></i> Action</th>
             <?PHP }?>
           </tr>
@@ -123,7 +123,7 @@ if (isset($_POST["Airport"])) {
             <td style="white-space: nowrap;"><?= $row["location_serve"] ?></td>
             <td style="white-space: nowrap;"><?= $row["time"] ?></td>
             <td style="white-space: nowrap;"><?= $row["dst"] ?></td>
-            <?PHP if($_SESSION["user_role"]=="admin"){ ?>
+            <?PHP if(isset($_SESSION["user_role"]) && $_SESSION["user_role"]=="admin"){ ?>
             <td class="text-center" style="white-space: nowrap;">
               <?php include("components/action.php")?>
             </td>

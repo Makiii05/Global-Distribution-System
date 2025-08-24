@@ -26,7 +26,7 @@ if (isset($_POST["Route"])) {
       <input type="hidden" name="Route">
 
       <div class="mb-3">
-        <label class="form-label fw-bold text-dark"><i class="bi bi-hash me-1"></i> AID</label>
+        <label class="form-label fw-bold text-dark"><i class="bi bi-hash me-1"></i> Airline User</label>
         <div class="input-group shadow-sm">
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="aid" name="aid" value="">
@@ -36,7 +36,7 @@ if (isset($_POST["Route"])) {
       </div>
 
       <div class="mb-3">
-        <label class="form-label fw-bold text-dark"><i class="bi bi-geo me-1"></i> OAPID</label>
+        <label class="form-label fw-bold text-dark"><i class="bi bi-geo me-1"></i> Origin Airport</label>
         <div class="input-group shadow-sm">
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="oapid" name="oapid" value="">
@@ -66,7 +66,7 @@ if (isset($_POST["Route"])) {
       </div>
 
       <div class="mb-3">
-        <label class="form-label fw-bold text-dark"><i class="bi bi-airplane me-1"></i> ACID</label>
+        <label class="form-label fw-bold text-dark"><i class="bi bi-airplane me-1"></i> Aircraft</label>
         <div class="input-group shadow-sm">
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="acid" name="acid" value="">
@@ -90,11 +90,11 @@ if (isset($_POST["Route"])) {
       <table class="table table-bordered border-dark align-middle shadow-sm">
         <thead class="table-dark sticky-top">
           <tr>
-            <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-hash"></i> AID</th>
-            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-geo"></i> OAPID</th>
-            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-geo-alt"></i> DAPID</th>
+            <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-hash"></i> Airline</th>
+            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-geo"></i> Origin Airport</th>
+            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-geo-alt"></i> Destination Airport</th>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-arrow-repeat"></i> Round Trip</th>
-            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-airplane"></i> ACID</th>
+            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-airplane"></i> Aircraft</th>
             <?PHP if(isset($_SESSION["user_aid"])){ ?>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-gear"></i> Action</th>
             <?PHP }?>

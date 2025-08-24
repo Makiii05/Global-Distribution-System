@@ -73,7 +73,7 @@ if (isset($_POST["Aircraft"])) {
             <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-upc-scan"></i> IATA</th>
             <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-upc"></i> ICAO</th>
             <th style="min-width: 200px; white-space: nowrap;"><i class="bi bi-airplane"></i> Model</th>
-            <?PHP if($_SESSION["user_role"]=="admin"){ ?>
+            <?PHP if(isset($_SESSION["user_role"]) && $_SESSION["user_role"]=="admin"){ ?>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-gear"></i> Action</th>
             <?PHP }?>
           </tr>
@@ -87,7 +87,7 @@ if (isset($_POST["Aircraft"])) {
             <td style="white-space: nowrap;"><?= $row["iata"] ?></td>
             <td style="white-space: nowrap;"><?= $row["icao"] ?></td>
             <td style="white-space: nowrap;"><?= $row["model"] ?></td>
-            <?PHP if($_SESSION["user_role"]=="admin"){ ?>
+            <?PHP if(isset($_SESSION["user_role"]) && $_SESSION["user_role"]=="admin"){ ?>
             <td class="text-center" style="white-space: nowrap;">
               <?php include("components/action.php")?>
             </td>
