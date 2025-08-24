@@ -95,7 +95,9 @@ if (isset($_POST["Route"])) {
             <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-geo-alt"></i> DAPID</th>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-arrow-repeat"></i> Round Trip</th>
             <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-airplane"></i> ACID</th>
+            <?PHP if(isset($_SESSION["user_aid"])){ ?>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-gear"></i> Action</th>
+            <?PHP }?>
           </tr>
         </thead>
         <tbody>
@@ -109,9 +111,11 @@ if (isset($_POST["Route"])) {
             <td style="white-space: nowrap;"><?= $row["dapid"] ?></td>
             <td style="white-space: nowrap;"><?= ($row["round_trip"] == 1) ? "Yes" : "No" ?></td>
             <td style="white-space: nowrap;"><?= $row["acid"] ?></td>
+            <?PHP if(isset($_SESSION["user_aid"]) == $row['aid']){ ?>
             <td class="text-center" style="white-space: nowrap;">
               <?php include("components/action.php")?>
             </td>
+            <?PHP }?>
           </tr>
           <?PHP }?>
         </tbody>

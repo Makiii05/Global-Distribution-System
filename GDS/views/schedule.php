@@ -117,7 +117,9 @@ if (isset($_POST["Schedule"])) {
             <th style="min-width: 130px; white-space: nowrap;"><i class="bi bi-calendar-check"></i> Date Arrival</th>
             <th style="min-width: 130px; white-space: nowrap;"><i class="bi bi-clock-history"></i> Time Arrival</th>
             <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-info-circle"></i> Status</th>
+            <?PHP if(isset($_SESSION["user_aid"])){ ?>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-gear"></i> Action</th>
+            <?PHP }?>
           </tr>
         </thead>
         <tbody>
@@ -133,9 +135,11 @@ if (isset($_POST["Schedule"])) {
             <td style="white-space: nowrap;"><?= $row["date_arrival"] ?></td>
             <td style="white-space: nowrap;"><?= $row["time_arrival"] ?></td>
             <td style="white-space: nowrap;"><?= $row["status"] ?></td>
+            <?PHP if(($_SESSION["user_id"] == $row['auid']) && isset($_SESSION["user_type"]) ){ ?>
             <td class="text-center" style="white-space: nowrap;">
               <?php include("components/action.php")?>
             </td>
+            <?PHP }?>
           </tr>
           <?PHP }?>
         </tbody>

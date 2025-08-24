@@ -44,7 +44,7 @@ if (isset($_POST["type"])){
         }
 
         // valid login → go to home page
-        header("Location:../");
+        header("Location:../Home");
         exit;
     }
 }

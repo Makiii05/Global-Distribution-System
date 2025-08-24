@@ -9,7 +9,7 @@
             aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
+    <?PHP if(isset($_SESSION["user_id"])){ ?>
     <!-- Links -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
@@ -44,6 +44,7 @@
         </li>
       </ul>
     </div>
+    <?PHP }?>
   </div>
 </nav>
 

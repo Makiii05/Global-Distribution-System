@@ -1,6 +1,12 @@
 <?php
 session_start(); // This must be at the top of the file
 $base = '/vanilla_project/GDS/';
+include("sql/functions.php");
+
+// --- Handle logout first ---
+if (isset($_GET['page']) && $_GET['page'] === "Login") {
+    logout(); // clear session before navbar renders
+}
 ?>
 <html>
 <head>
@@ -16,7 +22,6 @@ $base = '/vanilla_project/GDS/';
 <?php
 include("views/components/navbar.php");
 include("views/components/editModal.php");
-include("sql/functions.php");
 
 // --- START ROUTING ---
 $url = isset($_GET['page']) ? $_GET['page'] : '/';
@@ -45,11 +50,13 @@ switch($page){
         include("views/register.php");
         break;
     case "Login":
-        logout();
         include("views/login.php");
         break;
-    default:
+    case "Home":
         include("views/home.php");
+        break;
+    default:
+        include("views/login.php");
         break;
 }
 // --- END ROUTING ---

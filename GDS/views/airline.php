@@ -106,7 +106,9 @@
             <th style="min-width: 150px;"><i class="bi bi-broadcast"></i> Callsign</th>
             <th style="min-width: 120px;"><i class="bi bi-geo-alt"></i> Region</th>
             <th style="min-width: 200px; white-space: nowrap;"><i class="bi bi-card-text"></i> Comment</th>
+            <?PHP if($_SESSION["user_role"]=="admin"){ ?>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-gear"></i> Action</th>
+            <?PHP }?>
           </tr>
         </thead>
         <tbody>
@@ -121,9 +123,11 @@
             <td><?= $row["callsign"] ?></td>
             <td><?= $row["region"] ?></td>
             <td style="white-space: nowrap;"><?= $row["comments"] ?></td>
+            <?PHP if($_SESSION["user_role"]=="admin"){ ?>
             <td class="text-center" style="white-space: nowrap;">
               <?php include("components/action.php")?>
             </td>
+            <?PHP }?>
           </tr>
           <?PHP }?>
         </tbody>
