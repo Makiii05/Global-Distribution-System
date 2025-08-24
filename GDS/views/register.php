@@ -5,7 +5,8 @@
         <i class="bi bi-person-plus me-2"></i> Register
     </h3>
 
-    <form action="register_process.php" method="POST">
+    <form action="sql/auth.php" method="POST">
+        <input type="hidden" name="role" value="user">
         <div class="mb-3">
             <label for="username" class="form-label fw-bold text-dark">Username</label>
             <div class="input-group shadow-sm">
@@ -27,7 +28,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-dark shadow-sm w-100 d-flex align-items-center justify-content-center">
+        <button type="submit" class="btn btn-dark shadow-sm w-100 d-flex align-items-center justify-content-center" name="register">
             <i class="bi bi-person-plus me-1"></i> Register
         </button>
     </form>
