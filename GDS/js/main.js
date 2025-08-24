@@ -55,6 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+
+//show nodal
 function modal(rowData) {
     let modalBody = document.querySelector("#modalBody");
     let idCon = document.querySelector("#idCon");
@@ -80,3 +82,16 @@ function modal(rowData) {
     let myModal = new bootstrap.Modal(document.getElementById('editModal'));
     myModal.show();
 }
+
+// login toggle
+const roleButtons = document.querySelectorAll("[data-role]");
+const submitBtn = document.querySelector("#submit_btn");
+roleButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        // reset buttons
+        roleButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        // update submit button value
+        submitBtn.value = btn.dataset.role;
+    });
+});

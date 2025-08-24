@@ -67,9 +67,3 @@ function logout(){
     // Destroy the session
     session_destroy();
 }
-function register(){
-
-}
-function login(){
-    
-}

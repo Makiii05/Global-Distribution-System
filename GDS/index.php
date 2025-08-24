@@ -1,5 +1,6 @@
 <?php
 session_start(); // This must be at the top of the file
+$base = '/vanilla_project/GDS/';
 ?>
 <html>
 <head>

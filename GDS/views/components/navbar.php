@@ -13,7 +13,6 @@
     <!-- Links -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <?php $base = '/vanilla_project/GDS/'; ?>
         <li class="nav-item mx-2">
           <a class="nav-link text-white fw-semibold" href="<?= $base ?>Airline">Airline</a>
         </li>

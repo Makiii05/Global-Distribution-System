@@ -4,7 +4,13 @@
         <i class="bi bi-box-arrow-in-right me-2"></i> Login
     </h3>
 
-    <form action="login_process.php" method="POST">
+    <!-- Role toggle -->
+    <div class="btn-group w-100 mb-3" role="group" aria-label="Login type">
+        <button type="button" class="btn btn-outline-dark active" data-role="user">Normal User</button>
+        <button type="button" class="btn btn-outline-dark" data-role="airline_user">Airline User</button>
+    </div>
+
+    <form action="sql/auth.php" method="POST">
         <div class="mb-3">
             <label for="username" class="form-label fw-bold text-dark">Username</label>
             <div class="input-group shadow-sm">
@@ -19,7 +25,9 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-dark shadow-sm w-100 d-flex align-items-center justify-content-center">
+        <button type="submit" 
+                class="btn btn-dark shadow-sm w-100 d-flex align-items-center justify-content-center" 
+                name="type" value="user" id="submit_btn">
             <i class="bi bi-box-arrow-in-right me-1"></i> Login
         </button>
     </form>
