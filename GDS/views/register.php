@@ -27,6 +27,11 @@
                 <input type="password" class="form-control border-dark" id="confirmPassword" name="confirmPassword" required>
             </div>
         </div>
+        <?php if(isset($_GET["Error"])): ?>
+            <div class="alert alert-danger text-center py-2">
+                Password not match or Username already exists!
+            </div>
+        <?php endif; ?>
 
         <button type="submit" class="btn btn-dark shadow-sm w-100 d-flex align-items-center justify-content-center" name="register">
             <i class="bi bi-person-plus me-1"></i> Register

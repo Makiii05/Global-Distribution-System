@@ -24,6 +24,11 @@
                 <input type="password" class="form-control border-dark" id="password" name="password" required>
             </div>
         </div>
+        <?php if(isset($_GET["Error"])): ?>
+            <div class="alert alert-danger text-center py-2">
+                Invalid username or password.
+            </div>
+        <?php endif; ?>
 
         <button type="submit" 
                 class="btn btn-dark shadow-sm w-100 d-flex align-items-center justify-content-center" 

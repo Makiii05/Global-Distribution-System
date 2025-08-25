@@ -9,6 +9,26 @@ $dbname = "gds";
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
+function redirect($role, $message){
+    if ($role == "user"){
+        if ($message == "success"){
+            header("Location:../Home");
+            exit;
+        }else{
+            header("Location:../Register?Error");
+            exit;
+        }
+    }else{
+        if ($message == "success"){
+            header("Location:../Accounts?Success");
+            exit;
+        }else{
+            header("Location:../Accounts?Error");
+            exit;
+        }
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST["register"])) {
         $username = trim($_POST['username']);
@@ -18,28 +38,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // validate inputs
         if (empty($username) || empty($password) || empty($role)) {
-            die("All fields are required!");
+            redirect($role, "error");
         }
         
         // check confirm password
         if ($password !== $confirm) {
-            die("Passwords do not match!");
+            redirect($role, "error");
         }
 
+
         // check if username exists
-        $stmt = $conn->prepare("SELECT id FROM tbluser WHERE user = ?");
-        $stmt->bind_param("s", $username);
+        if (isset($_POST['aid'])){
+            $stmt = $conn->prepare("SELECT id FROM tblairlineuser WHERE user = ?");
+            $stmt->bind_param("s", $username);
+        }else{
+            $stmt = $conn->prepare("SELECT id FROM tbluser WHERE user = ? AND role = ?");
+            $stmt->bind_param("ss", $username, $role);
+        }
         $stmt->execute();
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
-            die("Username already exists!");
+            redirect($role, "error");
         }
         $stmt->close();
 
-        // insert new user
-        $stmt = $conn->prepare("INSERT INTO tbluser (user, pass, role) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $username, $password, $role);
+
+        if (isset($_POST['aid'])){
+            $aid = $_POST['aid'];
+            $type = $_POST['type'];
+            // insert new airline user
+            $stmt = $conn->prepare("INSERT INTO tblairlineuser (user, pass, type, aid) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("sssi", $username, $password, $type, $aid);
+        }else{
+            // insert new user
+            $stmt = $conn->prepare("INSERT INTO tbluser (user, pass, role) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $username, $password, $role);
+        }
 
         if ($stmt->execute()) {
             $newId = $stmt->insert_id;
@@ -47,14 +82,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION["user_id"]   = $newId;
             $_SESSION["user_user"] = $username;
             $_SESSION["user_role"] = $role;
+            $_SESSION["user_aid"] = isset($_POST["aid"]) ? $_POST['aid'] : "";
+            $_SESSION["user_type"] = isset($_POST["type"]) ? $_POST['type'] : "";
 
-            header("Location:../Home");
-            exit;
+            redirect($role, "success");
         } else {
-            header("Location:../Register");
-            exit;
+            redirect($role, "error");
         }
-
 
         $stmt->close();
         $conn->close();
@@ -75,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result->num_rows == 0) {
             // invalid login → back to login page
-            header("Location:../Login");
+            header("Location:../Login?Error");
             exit;
         } else {
             // fetch the row
@@ -98,3 +132,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
