@@ -58,6 +58,9 @@ switch($page){
     case "Accounts":
         include("views/accounts.php");
         break;
+    case "Import":
+        include("views/import.php");
+        break;
     default:
         include("views/login.php");
         break;

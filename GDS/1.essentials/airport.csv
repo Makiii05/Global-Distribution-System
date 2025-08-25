@@ -1,0 +1,31 @@
+id,iata,icao,airport_name,location_serve,time,dst
+1,MNL,RPLL,Ninoy Aquino International,"Manila, Philippines",UTC+8,N
+2,CEB,RPVM,Mactan–Cebu International,"Cebu, Philippines",UTC+8,N
+3,DVO,RPMD,Francisco Bangoy International,"Davao, Philippines",UTC+8,N
+4,CRK,RPLC,Clark International,"Angeles, Philippines",UTC+8,N
+5,ILO,RPVI,Iloilo International,"Iloilo, Philippines",UTC+8,N
+6,PPS,RPVP,Puerto Princesa International,"Palawan, Philippines",UTC+8,N
+7,TAG,RPVT,Bohol–Panglao International,"Bohol, Philippines",UTC+8,N
+8,ZAM,RPMZ,Zamboanga International,"Zamboanga, Philippines",UTC+8,N
+9,KLO,RPVK,Kalibo International,"Kalibo, Philippines",UTC+8,N
+10,LGP,RPVP,Legazpi (Bicol) International,"Albay, Philippines",UTC+8,N
+11,CGY,RPMY,Laguindingan Airport,"Cagayan de Oro, PH",UTC+8,N
+12,NRT,RJAA,Narita International,"Tokyo, Japan",UTC+9,N
+13,HND,RJTT,Haneda International,"Tokyo, Japan",UTC+9,N
+14,HKG,VHHH,Hong Kong International,Hong Kong,UTC+8,N
+15,SIN,WSSS,Singapore Changi,Singapore,UTC+8,N
+16,KUL,WMKK,Kuala Lumpur International,"Kuala Lumpur, Malaysia",UTC+8,N
+17,BKK,VTBS,Suvarnabhumi Airport,"Bangkok, Thailand",UTC+7,N
+18,DXB,OMDB,Dubai International,"Dubai, UAE",UTC+4,N
+19,DOH,OTHH,Hamad International,"Doha, Qatar",UTC+3,N
+20,LAX,KLAX,Los Angeles International,"Los Angeles, USA",UTC-8,Y
+21,SFO,KSFO,San Francisco International,"San Francisco, USA",UTC-8,Y
+22,JFK,KJFK,John F. Kennedy International,"New York, USA",UTC-5,Y
+23,LHR,EGLL,London Heathrow,"London, UK",UTC+0,Y
+24,LGW,EGKK,London Gatwick,"London, UK",UTC+0,Y
+25,CDG,LFPG,Paris Charles de Gaulle,"Paris, France",UTC+1,Y
+26,FRA,EDDF,Frankfurt International,"Frankfurt, Germany",UTC+1,Y
+27,AMS,EHAM,Amsterdam Schiphol,"Amsterdam, Netherlands",UTC+1,Y
+28,SYD,YSSY,Sydney Kingsford Smith,"Sydney, Australia",UTC+10,Y
+29,MEL,YMML,Melbourne Tullamarine,"Melbourne, Australia",UTC+10,Y
+30,ICN,RKSI,Incheon International,"Seoul, South Korea",UTC+9,N

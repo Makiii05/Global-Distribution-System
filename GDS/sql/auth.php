@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+require '../vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -130,6 +134,90 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location:../Home");
             exit;
         }
+    }elseif (isset($_POST["submit_import_file"])) {
+
+        $table = $_POST['table'];
+        $columns = (int)$_POST['columns'];
+        $fileName = $_FILES['import_file']['name'];
+        $file_ext = pathinfo($fileName, PATHINFO_EXTENSION);
+
+        $allowed_ext = ['xls', 'csv', 'xlsx'];
+        $_SESSION['error'] = []; // container for errors
+
+        if (!in_array($file_ext, $allowed_ext)) {
+            $_SESSION['error'][] = "Invalid file type. Allowed: CSV, XLS, XLSX.";
+            header('Location: ../Import');
+            exit(0);
+        }
+
+        try {
+            $inputFileNamePath = $_FILES['import_file']['tmp_name'];
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileNamePath);
+            $data = $spreadsheet->getActiveSheet()->toArray();
+
+            if (empty($data)) {
+                $_SESSION['error'][] = "File is empty.";
+                header('Location: ../Import');
+                exit(0);
+            }
+
+            $count = 0;
+            $header = [];
+            foreach ($data as $row) {
+                if ($count === 0) {
+                    $header = $row;
+
+                    // Check if header column count matches user input
+                    if (count($header) != $columns) {
+                        $_SESSION['error'][] = "Column count mismatch. Expected $columns, but file has " . count($header) . ".";
+                        break;
+                    }
+
+                } else {
+                    if (count($row) != $columns) {
+                        $_SESSION['error'][] = "Row $count has " . count($row) . " columns, expected $columns.";
+                        continue;
+                    }
+
+                    // Escape values
+                    $values = [];
+                    for ($i = 0; $i < $columns; $i++) {
+                        $values[] = "'" . $conn->real_escape_string($row[$i]) . "'";
+                    }
+
+                    // Escape headers (use backticks for SQL safety)
+                    $colNames = [];
+                    for ($i = 0; $i < $columns; $i++) {
+                        $colNames[] = "`" . $conn->real_escape_string($header[$i]) . "`";
+                    }
+
+                    $colStr = implode(',', $colNames);
+                    $valStr = implode(',', $values);
+
+                    $insertQuery = "INSERT INTO `$table` ($colStr) VALUES ($valStr)";
+                    $result = mysqli_query($conn, $insertQuery);
+
+                    if (!$result) {
+                        if (strpos(mysqli_error($conn), 'Duplicate') !== false) {
+                            $_SESSION['error'][] = "Duplicate entry found on row $count.";
+                        } else {
+                            $_SESSION['error'][] = "SQL error on row $count: " . mysqli_error($conn);
+                        }
+                    }
+                }
+                $count++;
+            }
+
+            if (empty($_SESSION['error'])) {
+                $_SESSION['success'] = "Successfully imported $count rows.";
+            }
+
+        } catch (Exception $e) {
+            $_SESSION['error'][] = "Error reading file: " . $e->getMessage();
+        }
+
+        header('Location: ../Import');
+        exit(0);
     }
 }
 

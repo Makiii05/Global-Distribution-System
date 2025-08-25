@@ -38,6 +38,11 @@
           <ul class="dropdown-menu dropdown-menu-end bg-black border border-white shadow-sm" aria-labelledby="userDropdown">
             <?PHP if(isset($_SESSION["user_role"]) && $_SESSION["user_role"]=="admin"){ ?>
             <li><a class="dropdown-item text-white" href="<?= $base ?>Accounts">Account</a></li>
+            <li><a class="dropdown-item text-white" href="<?= $base ?>Import">Import File</a></li>
+            <li><hr class="dropdown-divider border-light"></li>
+            <?PHP }?>
+            <?PHP if(isset($_SESSION["user_type"]) && $_SESSION["user_type"]=="admin"){ ?>
+            <li><a class="dropdown-item text-white" href="<?= $base ?>Import">Import File</a></li>
             <li><hr class="dropdown-divider border-light"></li>
             <?PHP }?>
             <li><a class="dropdown-item text-danger fw-bold" href="<?= $base ?>Login">Logout</a></li>
