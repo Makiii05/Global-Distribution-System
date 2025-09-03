@@ -25,9 +25,6 @@
         <li class="nav-item mx-2">
           <a class="nav-link text-white fw-semibold" href="<?= $base ?>Route">Flight Route</a>
         </li>
-        <li class="nav-item mx-2">
-          <a class="nav-link text-white fw-semibold" href="<?= $base ?>Schedule">Flight Schedule</a>
-        </li>
 
         <!-- User dropdown -->
         <li class="nav-item dropdown mx-2">

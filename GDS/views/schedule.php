@@ -1,6 +1,12 @@
 <?php
 // --- Flight Schedule Logic ---
 
+$id = $_POST["view_schedule"] ?? $_GET["view_schedule"] ?? null;
+
+if(empty($id)) {
+    header("Location: ".$base."Route");
+}
+
 if (isset($_POST["delete"])) {
     deleteData("tblflightschedule", $_POST["delete"]);
 }
@@ -10,54 +16,48 @@ if (isset($_POST["Edit"])) {
     editData("tblflightschedule", $_POST, $id);
 }
 
-if (isset($_POST["Schedule"])) {
-    $data = search("tblflightschedule", $_POST);
+if (isset($_POST["submit"])) {
+    $data = schedAction("tblflightschedule", $_POST);
 } else {
-    $data = getAll("tblflightschedule");
+    $data = getSched("tblflightschedule", $id);
 }
+
+$route = $conn->query("SELECT * FROM tblflightroute WHERE id = $id")->fetch_assoc();
+// First fetch airline ID, origin airport, destination airport from route
+$sql = "SELECT a.airline_name, o.airport_name AS origin, d.airport_name AS dest
+        FROM tblflightroute fr
+        LEFT JOIN tblairline a ON fr.aid = a.id
+        LEFT JOIN tblairport o ON fr.oapid = o.id
+        LEFT JOIN tblairport d ON fr.dapid = d.id
+        WHERE fr.id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $route["id"]);
+$stmt->execute();
+$stmt->bind_result($airlineName, $origin, $dest);
+$stmt->fetch();
+$stmt->close();
 ?>
+
+
 <div class="d-flex flex-wrap">
   <!-- Left side: Form -->
   <div class="card border-dark shadow-lg p-4 m-3" style="width: 400px; flex-shrink: 0;">
     <h3 class="text-center mb-4 text-dark d-flex align-items-center justify-content-center">
       <i class="bi bi-search me-2"></i> Search Flight Schedule
     </h3>
-    <form action="<?= $base ?>Schedule" method="post">
-      
-      <input type="hidden" name="Schedule">
-
-      <div class="mb-3">
-        <label class="form-label fw-bold text-dark"><i class="bi bi-person-vcard me-1"></i> Airline User</label>
-        <div class="input-group shadow-sm">
-          <div class="input-group-text bg-white border-dark">
-            <input type="checkbox" id="auid" name="auid" value="">
-          </div>
-          <input type="text" class="form-control border-dark" id="auidValue">
-        </div>
+    
+    <?PHP if (isset($_SESSION["user_aid"])) { ?>
+    <!-- Role toggle -->
+      <div class="btn-group w-100 mb-3" role="group" aria-label="Login type">
+          <button type="button" class="btn btn-outline-dark active" data-role="search_schedule">Search</button>
+          <button type="button" class="btn btn-outline-dark" data-role="insert_schedule">Insert</button>
       </div>
+    <?PHP } ?>
 
-      <div class="mb-3">
-        <label class="form-label fw-bold text-dark"><i class="bi bi-upc-scan me-1"></i> Flight Route</label>
-        <div class="input-group shadow-sm">
-          <div class="input-group-text bg-white border-dark">
-            <input type="checkbox" id="frid" name="frid" value="">
-          </div>
-          <select class="form-control border-dark" id="fridValue">
-            <?php
-              $sql = "SELECT fr.id, a.airline_name, o.airport_name AS origin, d.airport_name AS dest
-                      FROM tblflightroute fr
-                      LEFT JOIN tblairline a ON fr.aid = a.id
-                      LEFT JOIN tblairport o ON fr.oapid = o.id
-                      LEFT JOIN tblairport d ON fr.dapid = d.id";
-              $routes = $conn->query($sql);
-              while ($route = $routes->fetch_assoc()) {
-                  $label = "{$route['airline_name']} ({$route['origin']} → {$route['dest']})";
-                  echo "<option value='{$route['id']}'>$label</option>";
-              }
-            ?>
-          </select>
-        </div>
-      </div>
+    <form action="<?= $base ?>Schedule" method="POST">
+
+      <input type="hidden" name="view_schedule" value="<?= $id ?>">
+      <input type="hidden" name="submit" id="submit_btn" value="search_schedule"">
 
       <div class="mb-3">
         <label class="form-label fw-bold text-dark"><i class="bi bi-calendar-date me-1"></i> Date Departure</label>
@@ -65,7 +65,7 @@ if (isset($_POST["Schedule"])) {
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="dateDeparture" name="date_departure" value="">
           </div>
-          <input type="text" class="form-control border-dark" id="dateDepartureValue">
+          <input type="date" class="form-control border-dark" id="dateDepartureValue">
         </div>
       </div>
 
@@ -75,7 +75,7 @@ if (isset($_POST["Schedule"])) {
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="timeDeparture" name="time_departure" value="">
           </div>
-          <input type="text" class="form-control border-dark" id="timeDepartureValue">
+          <input type="time" class="form-control border-dark" id="timeDepartureValue">
         </div>
       </div>
 
@@ -85,7 +85,7 @@ if (isset($_POST["Schedule"])) {
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="dateArrival" name="date_arrival" value="">
           </div>
-          <input type="text" class="form-control border-dark" id="dateArrivalValue">
+          <input type="date" class="form-control border-dark" id="dateArrivalValue">
         </div>
       </div>
 
@@ -95,7 +95,7 @@ if (isset($_POST["Schedule"])) {
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="timeArrival" name="time_arrival" value="">
           </div>
-          <input type="text" class="form-control border-dark" id="timeArrivalValue">
+          <input type="time" class="form-control border-dark" id="timeArrivalValue">
         </div>
       </div>
 
@@ -109,22 +109,20 @@ if (isset($_POST["Schedule"])) {
         </div>
       </div>
 
-      <button type="submit" class="btn btn-dark shadow-sm w-100 d-flex align-items-center justify-content-center">
-        <i class="bi bi-search me-1"></i> Search
+      <button type="submit" id="submit_btn" value="search_schedule" class="btn btn-dark shadow-sm w-100 d-flex align-items-center justify-content-center">
+        <i class='bi bi-search me-1'></i> Search
       </button>
     </form>
   </div>
   <!-- Right side: Table -->
   <div class="card border-dark shadow-lg p-4 m-3" style="flex: 1; min-width: 0;">
     <h3 class="mb-4 text-dark d-flex align-items-center">
-      <i class="bi bi-calendar-event me-2"></i> Flight Schedule Data
+      <i class="bi bi-calendar-event me-2"></i><?= $airlineName ? "$airlineName ($origin → $dest)" : $route["id"];?><br> Flight Schedule Data
     </h3>
     <div class="table-responsive" style="max-height: 600px; overflow-x: auto;">
       <table class="table table-bordered border-dark align-middle shadow-sm rounded-3">
         <thead class="table-dark sticky-top">
           <tr>
-            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-person-vcard"></i> Airline User</th>
-            <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-upc-scan"></i> Flight Route</th>
             <th style="min-width: 140px; white-space: nowrap;"><i class="bi bi-calendar-date"></i> Date Departure</th>
             <th style="min-width: 140px; white-space: nowrap;"><i class="bi bi-clock"></i> Time Departure</th>
             <th style="min-width: 130px; white-space: nowrap;"><i class="bi bi-calendar-check"></i> Date Arrival</th>
@@ -136,53 +134,24 @@ if (isset($_POST["Schedule"])) {
           </tr>
         </thead>
         <tbody>
-<?PHP if($data->num_rows == 0) { ?>
-  <tr><td colspan="8" class="text-center text-muted">No matching records found.</td></tr>        
-<?PHP } ?>
-<?PHP while($row=$data->fetch_assoc()){ ?>
-<tr class="table-row-hover">
+        <?PHP if($data->num_rows == 0) { ?>
+        <tr><td colspan="8" class="text-center text-muted"><?= $route[""] ?>No matching records found.</td></tr>        
+        <?PHP } ?>
+        <?PHP while($row=$data->fetch_assoc()){ ?>
+        <tr class="table-row-hover">
 
-  <!-- Airline User -->
-  <td style="white-space: nowrap;">
-    <?= getForeignValue("tblairlineuser", "user", "id", $row["auid"]) ?>
-  </td>
-
-  <!-- Flight Route (Airline + Airports) -->
-  <td style="white-space: nowrap;">
-    <?php
-      // First fetch airline ID, origin airport, destination airport from route
-      $sql = "SELECT a.airline_name, o.airport_name AS origin, d.airport_name AS dest
-              FROM tblflightroute fr
-              LEFT JOIN tblairline a ON fr.aid = a.id
-              LEFT JOIN tblairport o ON fr.oapid = o.id
-              LEFT JOIN tblairport d ON fr.dapid = d.id
-              WHERE fr.id = ?";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("i", $row["frid"]);
-      $stmt->execute();
-      $stmt->bind_result($airlineName, $origin, $dest);
-      $stmt->fetch();
-      $stmt->close();
-      echo $airlineName ? "$airlineName ($origin → $dest)" : $row["frid"];
-    ?>
-  </td>
-
-  <!-- Dates & Times -->
-  <td style="white-space: nowrap;"><?= $row["date_departure"] ?></td>
-  <td style="white-space: nowrap;"><?= $row["time_departure"] ?></td>
-  <td style="white-space: nowrap;"><?= $row["date_arrival"] ?></td>
-  <td style="white-space: nowrap;"><?= $row["time_arrival"] ?></td>
-  <td style="white-space: nowrap;"><?= ucfirst($row["status"]) ?></td>
-
-  <?PHP if(($_SESSION["user_id"] == $row['auid']) && isset($_SESSION["user_type"]) ){ ?>
-  <td class="text-center" style="white-space: nowrap;">
-    <?php include("components/action.php")?>
-  </td>
-  <?PHP } ?>
-</tr>
-<?PHP } ?>
-</tbody>
-
+        <!-- Dates & Times -->
+        <td style="white-space: nowrap;"><?= $row["date_departure"] ?></td>
+        <td style="white-space: nowrap;"><?= $row["time_departure"] ?></td>
+        <td style="white-space: nowrap;"><?= $row["date_arrival"] ?></td>
+        <td style="white-space: nowrap;"><?= $row["time_arrival"] ?></td>
+        <td style="white-space: nowrap;"><?= ucfirst($row["status"]) ?></td>
+        <td class="text-center" style="white-space: nowrap;">
+            <?php include("components/action.php")?>
+        </td>
+        </tr>
+        <?PHP } ?>
+        </tbody>
       </table>
     </div>
   </div>

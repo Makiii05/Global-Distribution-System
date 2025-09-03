@@ -13,6 +13,9 @@ if (isset($_POST["Route"])) {
 } else {
   $data = getAll("tblflightroute");
 }
+
+
+require("components/addRouteModal.php");
 ?>
 
 <div class="d-flex flex-wrap">
@@ -26,12 +29,18 @@ if (isset($_POST["Route"])) {
       <input type="hidden" name="Route">
 
       <div class="mb-3">
-        <label class="form-label fw-bold text-dark"><i class="bi bi-hash me-1"></i> Airline User</label>
+        <label class="form-label fw-bold text-dark"><i class="bi bi-hash me-1"></i> Airline</label>
         <div class="input-group shadow-sm">
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="aid" name="aid" value="">
           </div>
-          <input type="text" class="form-control border-dark" id="aidValue">
+          <select id="aidValue" class="form-control border-dark">
+            <?PHP
+            $airlines = $conn->query("SELECT * FROM tblairline");
+            while($airline = $airlines->fetch_assoc()){
+              echo "<option value=$airline[id]>$airline[airline_name]</option>";
+            }?>
+          </select>
         </div>
       </div>
 
@@ -41,17 +50,29 @@ if (isset($_POST["Route"])) {
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="oapid" name="oapid" value="">
           </div>
-          <input type="text" class="form-control border-dark" id="oapidValue">
+          <select id="oapidValue" class="form-control border-dark">
+            <?PHP 
+            $airports = $conn->query("SELECT * FROM tblairport");
+            while($airport = $airports->fetch_assoc()){
+              echo "<option value='{$airport['id']}'>$airport[airport_name]</option>";
+            }?>
+          </select>
         </div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label fw-bold text-dark"><i class="bi bi-geo-alt me-1"></i> DAPID</label>
+        <label class="form-label fw-bold text-dark"><i class="bi bi-geo-alt me-1"></i> Destination Airport</label>
         <div class="input-group shadow-sm">
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="dapid" name="dapid" value="">
           </div>
-          <input type="text" class="form-control border-dark" id="dapidValue">
+          <select id="dapidValue" class="form-control border-dark">
+            <?PHP 
+            $airports = $conn->query("SELECT * FROM tblairport");
+            while($airport = $airports->fetch_assoc()){
+              echo "<option value='{$airport['id']}'>$airport[airport_name]</option>";
+            }?>
+          </select>
         </div>
       </div>
 
@@ -61,7 +82,10 @@ if (isset($_POST["Route"])) {
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="roundTrip" name="round_trip" value="">
           </div>
-          <input type="text" class="form-control border-dark" id="roundTripValue">
+          <select id="roundTripValue" class="form-control border-dark">
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+          </select>
         </div>
       </div>
 
@@ -71,7 +95,13 @@ if (isset($_POST["Route"])) {
           <div class="input-group-text bg-white border-dark">
             <input type="checkbox" id="acid" name="acid" value="">
           </div>
-          <input type="text" class="form-control border-dark" id="acidValue">
+          <select id="acidValue" class="form-control border-dark">
+            <?PHP 
+            $aircrafts = $conn->query("SELECT * FROM tblaircraft");
+            while($aircraft = $aircrafts->fetch_assoc()){
+              echo "<option value=$aircraft[id]>$aircraft[model]</option>";
+            }?>
+          </select>
         </div>
       </div>
 
@@ -85,6 +115,7 @@ if (isset($_POST["Route"])) {
   <div class="card border-dark shadow-lg p-4 m-3" style="flex: 1; min-width: 0;">
     <h3 class="mb-4 text-dark d-flex align-items-center">
       <i class="bi bi-table me-2"></i> Flight Route Data
+      <button type="button"data-bs-toggle="modal" data-bs-target="#addRouteModal" class="btn btn-dark shadow-sm ms-auto d-flex align-items-center justify-content-center"><i class="bi bi-plus-square me-2"></i>Add Flight Route</button>
     </h3>
     <div class="table-responsive" style="max-height: 600px; overflow-x: auto;">
       <table class="table table-bordered border-dark align-middle shadow-sm">
@@ -134,6 +165,12 @@ if (isset($_POST["Route"])) {
           <?php if(isset($_SESSION["user_aid"]) && $_SESSION["user_aid"] == $row['aid']){ ?>
           <td class="text-center" style="white-space: nowrap;">
             <?php include("components/action.php")?>
+            <form action="<?= $base ?>Schedule" method="POST" style="display:inline;">
+              <input type="hidden" name="view_schedule" value="<?= $row["id"] ?>">
+              <button type="submit" class="btn fw-bold text-success p-0 border-success p-2 mx-2">
+                Schedule
+              </button>
+            </form>
           </td>
           <?php } ?>
         </tr>

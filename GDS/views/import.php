@@ -12,11 +12,11 @@
             <div class="input-group shadow-sm">
                 <select class="form-select border-dark" id="tableSelect" name="table" required>
                     <option value="" disabled selected>-- Choose a table --</option>
+                    <?PHP if($_SESSION["user_role"] == "admin"){?>
                     <option value="tblaircraft">Aircraft Table</option>
                     <option value="tblairline">Airline Table</option>
                     <option value="tblairport">Airport Table</option>
-                    <option value="tblflightroute">Flight Route Table</option>
-                    <option value="tblflightschedule">Flight Schedule Table</option>
+                    <?PHP }?>
                 </select>
             </div>
         </div>

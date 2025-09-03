@@ -30,13 +30,40 @@ function search($table, $where){
 
         // join with AND
         $condi = implode(" AND ", $conditions);
-
         $sql = "SELECT * FROM $table WHERE $condi";
         $result = $conn->query($sql);    
         return $result;
     } else {
         return getAll($table);
     }
+}
+function getSched($table, $id){
+    global $conn;
+    $sql = "SELECT * FROM $table where frid = $id";
+    $result = $conn->query($sql);
+    return $result;
+}
+function schedAction($table, $where){
+    global $conn;
+    if(count($where) > 2){
+        if($where["submit"] == "search_schedule"){
+            // remove first element
+            array_shift($where);
+            return search($table, $where);
+        } elseif ($where["submit"] == "insert_schedule") {
+            $sql = "INSERT INTO $table (auid, frid, date_departure, time_departure, date_arrival, time_arrival, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("iisssss", $_SESSION["user_id"], $where["view_schedule"], $where["date_departure"], $where["time_departure"], $where["date_arrival"], $where["time_arrival"], $where["status"]);
+            $stmt->execute();
+            $stmt->close();
+        } else {
+            return getSched($table, $where["view_schedule"]);
+        }
+    } else {
+        return getSched($table, $where["view_schedule"]);
+    }
+
+    return getSched($table, $where["view_schedule"]);
 }
 function deleteData($table, $id){
     global $conn;

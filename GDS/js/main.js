@@ -85,6 +85,9 @@ function modal(rowData) {
 
 // login toggle
 const roleButtons = document.querySelectorAll("[data-role]");
+const checkInputDiv = document.querySelectorAll(".input-group-text");
+const checkInputField = document.querySelectorAll("input[type=checkbox]");
+const InputValueField = document.querySelectorAll(".form-control");
 const submitBtn = document.querySelector("#submit_btn");
 roleButtons.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -93,5 +96,21 @@ roleButtons.forEach(btn => {
         btn.classList.add("active");
         // update submit button value
         submitBtn.value = btn.dataset.role;
+
+        if (submitBtn.value == "search_schedule") {
+          for (let i = 0; i < checkInputField.length; i++) {
+            checkInputDiv[i].style.display = "block";        
+            checkInputField[i].checked = false;
+            InputValueField[i].required = false;
+            submitBtn.innerHTML = "<i class='bi bi-search me-1'></i>Search"
+          }
+        } else if(submitBtn.value == "insert_schedule") {
+          for (let i = 0; i < checkInputField.length; i++) {
+            checkInputDiv[i].style.display = "none";        
+            checkInputField[i].checked = true;
+            InputValueField[i].required = true;      
+            submitBtn.innerHTML = "<i class='bi bi-file-plus me-1'></i>Insert"
+          }
+        }
     });
 });
