@@ -73,6 +73,9 @@ if (isset($_POST["Aircraft"])) {
             <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-upc-scan"></i> IATA</th>
             <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-upc"></i> ICAO</th>
             <th style="min-width: 200px; white-space: nowrap;"><i class="bi bi-airplane"></i> Model</th>
+            <th style="min-width: 200px; white-space: nowrap;"><i class="bi bi-airplane"></i> First Class</th>
+            <th style="min-width: 200px; white-space: nowrap;"><i class="bi bi-airplane"></i> Business Class</th>
+            <th style="min-width: 200px; white-space: nowrap;"><i class="bi bi-airplane"></i> Economy Class</th>
             <?PHP if(isset($_SESSION["user_role"]) && $_SESSION["user_role"]=="admin"){ ?>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-gear"></i> Action</th>
             <?PHP }?>
@@ -87,6 +90,9 @@ if (isset($_POST["Aircraft"])) {
             <td style="white-space: nowrap;"><?= $row["iata"] ?></td>
             <td style="white-space: nowrap;"><?= $row["icao"] ?></td>
             <td style="white-space: nowrap;"><?= $row["model"] ?></td>
+            <td style="white-space: nowrap;"><?= $row["first_class"] ?></td>
+            <td style="white-space: nowrap;"><?= $row["business_class"] ?></td>
+            <td style="white-space: nowrap;"><?= $row["economy_class"] ?></td>
             <?PHP if(isset($_SESSION["user_role"]) && $_SESSION["user_role"]=="admin"){ ?>
             <td class="text-center" style="white-space: nowrap;">
               <?php include("components/action.php")?>

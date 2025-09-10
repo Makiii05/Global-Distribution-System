@@ -22,6 +22,7 @@ if (isset($_GET['page']) && $_GET['page'] === "Login") {
 <?php
 include("views/components/navbar.php");
 include("views/components/editModal.php");
+include("views/components/seatModal.php");
 
 // --- START ROUTING ---
 $url = isset($_GET['page']) ? $_GET['page'] : '/';

@@ -51,11 +51,17 @@ function schedAction($table, $where){
             array_shift($where);
             return search($table, $where);
         } elseif ($where["submit"] == "insert_schedule") {
-            $sql = "INSERT INTO $table (auid, frid, date_departure, time_departure, date_arrival, time_arrival, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO $table (auid, frid, date_departure, time_departure, date_arrival, time_arrival, status, fclass_price, cclass_price, yclass_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("iisssss", $_SESSION["user_id"], $where["view_schedule"], $where["date_departure"], $where["time_departure"], $where["date_arrival"], $where["time_arrival"], $where["status"]);
+            $stmt->bind_param("iisssssiii", $_SESSION["user_id"], $where["view_schedule"], $where["date_departure"], $where["time_departure"], $where["date_arrival"], $where["time_arrival"], $where["status"], $where["fclass_price"], $where["cclass_price"], $where["yclass_price"]);
             $stmt->execute();
+            
+            $id = $conn->insert_id;
+            $aircraft_id = (string)$conn->query("SELECT ac.id AS aircraft_id FROM tblflightschedule fs JOIN tblflightroute fr ON fs.frid = fr.id JOIN tblaircraft ac ON fr.acid = ac.id WHERE fs.frid = $where[view_schedule]")->fetch_assoc()['aircraft_id'];
+            createSeatPlan($id, $aircraft_id);
+
             $stmt->close();
+
         } else {
             return getSched($table, $where["view_schedule"]);
         }
@@ -105,4 +111,48 @@ function getForeignValue($table, $column, $idColumn, $id) {
     $stmt->fetch();
     $stmt->close();
     return $value ?? $id; // fallback: show ID if no match
+}
+function createSeatPlan($fid, $aircraft_id) {
+    global $conn;
+
+    // Fetch seat counts per class
+    $row = $conn->query("
+        SELECT first_class, business_class, economy_class 
+        FROM tblaircraft 
+        WHERE id = $aircraft_id
+    ")->fetch_assoc();
+
+    // Class configs
+    $classes = [
+        "First"    => ["count" => (int)$row['first_class'], "perRow" => 3],
+        "Business" => ["count" => (int)$row['business_class'], "perRow" => 4],
+        "Economy"  => ["count" => (int)$row['economy_class'], "perRow" => 6],
+    ];
+
+    $sql = "INSERT INTO tblseats (fid, ticket_no, seat_name, class, status) 
+            VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+
+    $seatCounter = 1; // continuous ticket number across all classes
+
+    foreach ($classes as $class => $data) {
+        for ($i = 1; $i <= $data['count']; $i++) {
+            $ticket_no = str_pad($seatCounter, 6, '0', STR_PAD_LEFT);
+            $seat_name = generateSeatName($i, $data['perRow']); // resets seat layout inside each class
+            $status = "available";
+
+            $stmt->bind_param("issss", $fid, $ticket_no, $seat_name, $class, $status);
+            $stmt->execute();
+
+            $seatCounter++; // keep ticket numbers unique across all seats
+        }
+    }
+
+    $stmt->close();
+}
+function generateSeatName($i, $seatsPerRow) {
+    $row = ceil($i / $seatsPerRow); 
+    $col = ($i - 1) % $seatsPerRow;
+    $letters = range('A', 'Z');
+    return $letters[$col] . $row;
 }
