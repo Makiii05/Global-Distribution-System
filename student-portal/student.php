@@ -64,10 +64,6 @@ require("components/head.php");
                                         <input type='hidden' name='from' value='students'>
                                         <button type='submit' class='btn border-dark'><i class='bi bi-pencil p-1 text-dark'></i></button>
                                     </form>
-                                    <form action='enroll.php' method='POST'>
-                                        <input type='hidden' name='student_no' value='$row[studno]'>
-                                        <button type='submit' class='btn border-dark'><i class='bi bi-journal-plus p-1'></i></button>
-                                    </form>
                                 </td>";
                                 echo "</tr>";
                             }

@@ -54,7 +54,18 @@ if(isset($_POST['student_no'])){
         }
     }
 }
+$student_list_query = $conn->query("
+    SELECT 
+        st.student_id AS id, 
+        st.student_no AS studno,
+        st.name AS name, 
+        st.gender AS gender, 
+        cr.name AS course_name 
+    FROM students st 
+    JOIN courses cr ON st.course_id = cr.course_id
+");
 
+$student_list = [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,7 +76,8 @@ require("components/head.php");
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <?PHP
-            require("components/sidebar.php")
+            require("components/sidebar.php");
+            require("components/search_modal.php");
             ?>
             <div class="col py-3 d-flex flex-column">
                 
@@ -76,11 +88,13 @@ require("components/head.php");
                 <hr>
                 <div class="mx-4 mb-auto">
                     <h5>Student # </h5>
-                    <div class="d-flex gap-4">
+                    <div class="d-flex gap-2">
                         <form action="enroll.php" method="POST" id="stud_no_form">
                             <input type="number" id="stud_no_input" class="mx-3 form-control" name="student_no" value="<?PHP echo isset($_POST['student_no']) ? $_POST['student_no'] : "" ?>">
                         </form>
-                        <a href="student.php" class="btn border-dark"><i class="bi bi-search"></i></a>
+                        <button type="button" class="btn btn-dark ms-3" data-bs-toggle="modal" data-bs-target="#searchModal">
+                            <i class="bi bi-search"></i>
+                        </button>
                     </div>
                     <hr>
                     <?PHP if(isset($_POST['student_no'])) { ?>
@@ -167,10 +181,53 @@ require("components/head.php");
     </div>
 </body>
 <script>
-    studForm = document.getElementById('stud_no_form');
-    studInp = document.getElementById('stud_no_input');
+    const studForm = document.getElementById('stud_no_form');
+    const studInp = document.getElementById('stud_no_input');
+    const studentList = <?= json_encode($student_list) ?>;
+    const table = document.getElementById("student_list_table");
+    const searchBy = document.getElementById("search_by");
+    const searchByInput = document.getElementById("search_by_input");
+
+    searchBy.onchange = search_student;
+    searchByInput.oninput = search_student;
+
+    function search_student() {
+        const filterBy = searchBy.value;        
+        const keyword = searchByInput.value.toLowerCase();
+
+        table.innerHTML = "";
+
+        const results = studentList.filter(stud => 
+            stud[filterBy].toLowerCase().includes(keyword)
+        );
+
+        if (results.length === 0) {
+            table.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No matching students</td></tr>';
+            return;
+        }
+
+        results.forEach(stud => {
+            const row = `
+                <tr>
+                    <td>${stud.studno}</td>
+                    <td>${stud.name}</td>
+                    <td>${stud.course_name}</td>
+                    <td>
+                        <form action="enroll.php" method="POST">
+                            <input type="hidden" name="student_no" value="${stud.studno}">
+                            <button type="submit" class="btn border-dark">
+                                <i class="bi bi-journal-plus p-1"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>`;
+            table.insertAdjacentHTML("beforeend", row);
+        });
+    }
+
     studInp.onchange = function () {
-        studForm.submit()
+        studForm.submit();
     }
 </script>
+
 </html>
