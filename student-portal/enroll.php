@@ -6,6 +6,7 @@ if(isset($_POST['student_no'])){
     $student_course = "";
     $student_code = "";
     $student_id = "";
+    $semester = $_POST['semester_id'] ?? 1;
     $student_info = $conn->query("SELECT 
         s.student_id AS id,
         s.name AS name,
@@ -22,25 +23,36 @@ if(isset($_POST['student_no'])){
         sub.time AS time,
         r.name AS room,
         t.name AS teacher,
-        sub.unit AS unit
+        sub.unit AS unit,
+        ss.student_id AS studid,
+        ss.subject_id AS subid,
+        ss.semester_id AS semid
         FROM student_subjects ss
         JOIN subjects sub ON ss.subject_id=sub.subject_id
         JOIN students s ON ss.student_id=s.student_id
         JOIN teachers t ON t.id = sub.teacher_id
         JOIN rooms r ON r.id = sub.room_id
         WHERE s.student_no = $_POST[student_no]
+        AND ss.semester_id = $semester
         ";
     if(isset($_POST['enroll'])){
         $student_id = $_POST['student_id'];
         $subject_id = $_POST['subject_id'];
+        $semester_id = $_POST['semester_id'];
 
-        $check = $conn->query("SELECT * FROM student_subjects WHERE student_id = $student_id AND subject_id = $subject_id");
+        $check = $conn->query("SELECT * FROM student_subjects WHERE student_id = $student_id AND subject_id = $subject_id AND semester_id=$semester_id");
 
         if(mysqli_num_rows($check) == 0){
-            $enroll = $conn->prepare("INSERT INTO student_subjects (student_id, subject_id) VALUES (?, ?)");
-            $enroll->bind_param("ii", $student_id, $subject_id);
+            $enroll = $conn->prepare("INSERT INTO student_subjects (student_id, subject_id, semester_id) VALUES (?, ?, ?)");
+            $enroll->bind_param("iii", $student_id, $subject_id, $semester_id);
             $enroll->execute();
         }
+    }elseif(isset($_POST['delete'])){
+        $studid = $_POST['student_id'];
+        $subid = $_POST['subject_id'];
+        $semid = $_POST['semester_id'];
+
+        $delete = $conn->query("DELETE FROM student_subjects WHERE student_id = $studid AND subject_id = $subid AND semester_id = $semid");
     }
     $result=$conn->query($sql);
     if(mysqli_num_rows($student_info) != 1){
@@ -105,7 +117,25 @@ require("components/head.php");
                     <div class="d-flex gap-3">
                         <b>Course:</b> <p><?= $student_code ?></p>
                     </div>
-                    <table class="table table-striped table-hover overflow-scroll">
+                    <input type="hidden" id="delete_sub_btn">
+                    <div class="d-flex gap-3">
+                        <b>Semester:</b>
+                        <form action="enroll.php" method="POST" id="semester_form">
+                            <input type='hidden' name='student_no' value=<?= $_POST['student_no'] ?>>
+                            <select name="semester_id" class="form-select" id="semester_select">
+                                <?PHP
+                                $semesters = $conn->query("SELECT * FROM semesters");
+                                while($row=$semesters->fetch_assoc()){
+                                    echo "<option value='$row[semester_id]' ";
+                                    echo ($semester == $row['semester_id']) ? 'selected' : '';
+                                    echo ">$row[code]</option>";
+                                }
+                                ?>
+                            </select>
+                        </form>
+                    </div>
+                    
+                    <table class="table table-striped table-hover overflow-scroll mt-2">
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col">Subject Code</th>
@@ -115,6 +145,8 @@ require("components/head.php");
                                 <th scope="col">Room</th>
                                 <th scope="col">Teacher</th>
                                 <th scope="col">Unit</th>
+                                <th scope="col">Semester</th>
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -128,6 +160,16 @@ require("components/head.php");
                                     <td>$row[room]</td>
                                     <td>$row[teacher]</td>
                                     <td>$row[unit]</td>
+                                    <td>$row[semid]</td>
+                                    <td>
+                                        <form action='enroll.php' method='POST' class='d-flex mx-4 gap-3'>
+                                            <input type='hidden' name='student_no' value=$_POST[student_no]>
+                                            <input type='hidden' name='student_id' value=$student_id>
+                                            <input type='hidden' name='subject_id' value=$row[subid]>
+                                            <input type='hidden' name='semester_id' value=$row[semid]>
+                                            <input type='submit' name='delete' value='Delete' id='delete_sub_btn' class='btn border-danger text-danger' onclick='confirm(`Are you sure you want to delete this Data?`)'>
+                                        </form>
+                                    </td>
                                 </tr>";
                             }
                             ?>
@@ -141,6 +183,7 @@ require("components/head.php");
                         <form action="enroll.php" method="POST" class="d-flex mx-4 gap-3">
                             <input type="hidden" name="student_no" value="<?= $_POST['student_no'] ?? "" ?>">
                             <input type="hidden" name="student_id" value="<?= $student_id?>">
+                            <input type="hidden" name="semester_id" value="<?= $semester?>">
                             <select name="subject_id" class="form-select">
                                 <?PHP
                                 $sql = "
@@ -157,7 +200,7 @@ require("components/head.php");
                                 JOIN teachers t ON t.id = sub.teacher_id
                                 JOIN rooms r ON r.id = sub.room_id
                                 WHERE sub.subject_id NOT IN (
-                                    SELECT subject_id FROM student_subjects WHERE student_id = $student_id
+                                    SELECT subject_id FROM student_subjects WHERE student_id = $student_id AND semester_id = $semester
                                 )
                                 ";
                                 $result=$conn->query($sql);
@@ -172,6 +215,7 @@ require("components/head.php");
                     </div>
                     <form action="print/p_stud_subs.php" method="POST" target="_blank" class="mx-4 mt-2">
                         <input type="hidden" name="student_no" value="<?= $_POST['student_no'] ?? "" ?>">
+                        <input type="hidden" name="semester_id" value="<?= $semester ?? "" ?>">
                         <input type="submit" value="Print" class="btn bg-dark text-light">
                     </form>
                 </div>
@@ -187,6 +231,8 @@ require("components/head.php");
     const table = document.getElementById("student_list_table");
     const searchBy = document.getElementById("search_by");
     const searchByInput = document.getElementById("search_by_input");
+    const semForm = document.getElementById("semester_form");
+    const semSelect = document.getElementById("semester_select");
 
     searchBy.onchange = search_student;
     searchByInput.oninput = search_student;
@@ -227,6 +273,9 @@ require("components/head.php");
 
     studInp.onchange = function () {
         studForm.submit();
+    }
+    semSelect.onchange = function () {
+        semForm.submit();
     }
 </script>
 

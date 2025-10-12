@@ -44,6 +44,12 @@ include("sql/messages.php");
         </a>
       </li>
       <li>
+        <a href="grade.php" class="nav-link text-white">
+          <i class="bi bi-file-earmark-plus-fill"></i>
+          <span class="ms-2 d-none d-sm-inline">Insert Grade</span>
+        </a>
+      </li>
+      <li>
         <a href="print/p_stud.php" class="nav-link text-white">
           <i class="fs-5 bi-table"></i>
           <span class="ms-2 d-none d-sm-inline">Report</span>

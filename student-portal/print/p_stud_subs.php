@@ -16,7 +16,7 @@ $student_info = $conn->query("SELECT
     c.code AS code
     FROM students s
     JOIN courses c ON c.course_id=s.course_id
-    WHERE student_no=119
+    WHERE student_no=$_POST[student_no]
     ");
 $subjects = $conn->query("SELECT
     sub.code AS code,
@@ -26,13 +26,16 @@ $subjects = $conn->query("SELECT
     r.name AS room,
     t.name AS teacher,
     sub.unit AS unit,
-    sub.price_unit AS price
+    sub.price_unit AS price,
+    ss.semester_id AS semester
     FROM student_subjects ss
+    JOIN semesters sem ON ss.semester_id=sem.semester_id
     JOIN subjects sub ON ss.subject_id=sub.subject_id
     JOIN students s ON ss.student_id=s.student_id
     JOIN teachers t ON t.id = sub.teacher_id
     JOIN rooms r ON r.id = sub.room_id
-    WHERE s.student_no = 119
+    WHERE s.student_no = $_POST[student_no]
+    AND ss.semester_id=$_POST[semester_id]
     ");
 
 $pdf->SetFont('Arial', 'B', 8);
@@ -57,7 +60,11 @@ $pdf->SetFont('Arial', '', 10);
 while($row=$student_info->fetch_assoc()){
     $pdf->Cell(10, 10, "", 0, 0, 'L');
     $pdf->Cell(60, 10, "Student #:  $row[number]", 0, 0, 'L');
-    $pdf->Cell(120, 10, "Name:  $row[name]", 0, 1, 'L');
+    $pdf->Cell(60, 10, "Name:  $row[name]", 0, 0, 'L');
+    $semesters = $conn->query("SELECT * FROM semesters WHERE semester_id=$_POST[semester_id]");
+    while($semester=$semesters->fetch_assoc()){
+    $pdf->Cell(60, 10, "Semester:  $semester[code]", 0, 1, 'L');
+    }
     $pdf->Cell(10, 10, "", 0, 0, 'L');
     $pdf->Cell(180, 10, "Course:  $row[course]", 0, 1, 'L');
 }
