@@ -1,9 +1,7 @@
 <?php
-session_start();
 if(!$_SESSION['user_name']){
     header("Location:auth/signin.php");
 }
-
 if (isset($_GET["error"])) {
     $error = $_GET["error"];
 

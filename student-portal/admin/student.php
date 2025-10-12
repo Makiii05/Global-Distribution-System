@@ -1,5 +1,6 @@
 <?PHP
-require("conn.php");
+require("../conn.php");
+require("../sql/check_admin.php");
 
 
 $sql = "SELECT st.student_id AS id, st.student_no AS studno ,st.name AS name, st.gender AS gender, cr.name AS course_name FROM students st JOIN courses cr ON st.course_id = cr.course_id";
@@ -13,13 +14,13 @@ $result = $conn->query($sql);
 <!DOCTYPE html>
 <html lang="en">
 <?PHP 
-require("components/head.php");
+require("../components/head.php");
 ?>
 <body>
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <?PHP
-            require("components/sidebar.php")
+            require("../components/sidebar.php")
             ?>
             <div class="col py-3">
                 
@@ -54,10 +55,10 @@ require("components/head.php");
                                 echo "<td>$gender</td>";
                                 echo "<td>$row[course_name]</td>";
                                 echo "<td class='d-flex gap-3'>
-                                    <form action='sql/controller.php' method='POST'>
+                                    <form action='../sql/controller.php' method='POST'>
                                         <input type='hidden' name='delete' value='$row[id]'>
                                         <input type='hidden' name='from' value='students'>
-                                        <button class='btn border-danger' type='submit' onclick='confirm('Are you sure to delete this data?')'><i class='bi bi-trash3 p-1 text-danger'></i></button>
+                                        <button class='btn border-danger' type='submit' onclick='confirm(`Are you sure to delete this data?`)'><i class='bi bi-trash3 p-1 text-danger'></i></button>
                                     </form>
                                     <form action='edit.php' method='POST'>
                                         <input type='hidden' name='edit' value='$row[id]'>

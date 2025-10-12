@@ -1,5 +1,6 @@
 <?PHP
-require("conn.php");
+require("../conn.php");
+require("../sql/check_admin.php");
 
 $sql = "SELECT st.student_id AS id, st.student_no AS studno ,st.name AS name, st.gender AS gender, cr.name AS course_name FROM students st JOIN courses cr ON st.course_id = cr.course_id";
 $course = $_POST['course_filter'] ?? "";
@@ -13,13 +14,13 @@ $result = $conn->query($sql);
 <!DOCTYPE html>
 <html lang="en">
 <?PHP 
-require("components/head.php");
+require("../components/head.php");
 ?>
 <body>
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <?PHP
-            require("components/sidebar.php")
+            require("../components/sidebar.php")
             ?>
             <div class="col py-3">
                 

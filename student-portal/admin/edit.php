@@ -1,14 +1,15 @@
 <?PHP
-require('conn.php');
+require('../conn.php');
+require("../sql/check_admin.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?PHP 
-require("components/head.php");
+require("../components/head.php");
 ?>
 <div class='container w-50 mt-5'>
     <div>
-        <form action='sql/controller.php' method="POST">
+        <form action='../sql/controller.php' method="POST">
         <h1 class="fw-bolder mb-5">EDIT DATA</h1>
         <?PHP
         if($_POST['from'] == 'students'){

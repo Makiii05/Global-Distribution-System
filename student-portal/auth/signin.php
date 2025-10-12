@@ -20,7 +20,7 @@ if(isset($_POST['signin'])){
         session_start();
         $_SESSION['user_id'] = $id;
         $_SESSION['user_name'] = $user;
-        $_SESSION['user_pass'] = $role;
+        $_SESSION['user_role'] = $role;
         header("location:../index.php");
         $stmt->close();
     } else {

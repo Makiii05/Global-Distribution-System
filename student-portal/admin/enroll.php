@@ -1,5 +1,6 @@
 <?PHP
-require("conn.php");
+require("../conn.php");
+require("../sql/check_admin.php");
 if(isset($_POST['student_no'])){
     
     $student_name = "";
@@ -82,14 +83,14 @@ $student_list = [];
 <!DOCTYPE html>
 <html lang="en">
 <?PHP 
-require("components/head.php");
+require("../components/head.php");
 ?>
 <body>
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <?PHP
-            require("components/sidebar.php");
-            require("components/search_modal.php");
+            require("../components/sidebar.php");
+            require("../components/search_modal.php");
             ?>
             <div class="col py-3 d-flex flex-column">
                 
@@ -213,7 +214,7 @@ require("components/head.php");
                             <input type="submit" name="enroll" value="Enroll" class="btn bg-dark text-light">
                         </form>
                     </div>
-                    <form action="print/p_stud_subs.php" method="POST" target="_blank" class="mx-4 mt-2">
+                    <form action="../print/p_stud_subs.php" method="POST" target="_blank" class="mx-4 mt-2">
                         <input type="hidden" name="student_no" value="<?= $_POST['student_no'] ?? "" ?>">
                         <input type="hidden" name="semester_id" value="<?= $semester ?? "" ?>">
                         <input type="submit" value="Print" class="btn bg-dark text-light">

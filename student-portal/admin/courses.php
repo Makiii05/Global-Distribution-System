@@ -1,7 +1,8 @@
 <?PHP
-require("conn.php");
+require("../conn.php");
+require("../sql/check_admin.php");
 
-$sql = "SELECT cr.course_id AS id, cr.code as code, cr.name AS name, COUNT(st.course_id) as count_student FROM courses cr JOIN students st ON cr.course_id = st.course_id GROUP BY st.course_id";
+$sql = "SELECT cr.course_id AS id, cr.code as code, cr.name AS name, COUNT(st.course_id) as count_student FROM courses cr LEFT JOIN students st ON cr.course_id = st.course_id GROUP BY cr.course_id ORDER BY cr.course_id ASC  ";
 
 $result = $conn->query($sql);
 
@@ -9,13 +10,13 @@ $result = $conn->query($sql);
 <!DOCTYPE html>
 <html lang="en">
 <?PHP 
-require("components/head.php");
+require("../components/head.php");
 ?>
 <body>
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <?PHP
-            require("components/sidebar.php")
+            require("../components/sidebar.php")
             ?>
             <div class="col py-3">
                 
@@ -41,10 +42,10 @@ require("components/head.php");
                                 echo "<td>$row[name]</td>";
                                 echo "<td>$row[count_student]</td>";
                                 echo "<td class='d-flex gap-3'>
-                                    <form action='sql/controller.php' method='POST'>
+                                    <form action='../sql/controller.php' method='POST'>
                                         <input type='hidden' name='delete' value='$row[id]'>
                                         <input type='hidden' name='from' value='courses'>
-                                        <button class='btn border-danger' type='submit' onclick='confirm('Are you sure to delete this data?')'><i class='bi bi-trash3 p-1 text-danger'></i></button>
+                                        <button class='btn border-danger' type='submit' onclick='confirm(`Are you sure to delete this data?`)'><i class='bi bi-trash3 p-1 text-danger'></i></button>
                                     </form>
                                     <form action='edit.php' method='POST'>
                                         <input type='hidden' name='edit' value='$row[id]'>

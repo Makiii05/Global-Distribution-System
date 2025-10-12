@@ -12,13 +12,13 @@ if(isset($_POST["add"])){
         // check if existing studno
         $checkIfExisting = $conn->query("SELECT * FROM students WHERE student_no = $studno");
         if(mysqli_num_rows($checkIfExisting) >= 1){
-            header("location:../student.php?error=2");
+            header("location:../admin/student.php?error=2");
             exit;
         }
 
         $sql = "INSERT INTO students (student_no, name, gender, course_id) VALUES ('$studno','$name','$gender','$course')";
         $result = $conn->query($sql);
-        header("location:../student.php");
+        header("location:../admin/student.php");
     }else if(isset($_POST["code"])){
         $code = $_POST["code"];
         $name = $_POST["name"];
@@ -26,13 +26,13 @@ if(isset($_POST["add"])){
         // check if existing studno
         $checkIfExisting = $conn->query("SELECT * FROM courses WHERE code = '$code'");
         if(mysqli_num_rows($checkIfExisting) >= 1){
-            header("location:../courses.php?error=2");
+            header("location:../admin/courses.php?error=2");
             exit;
         }
 
         $sql = "INSERT INTO courses (code, name) VALUES ('$code','$name')";
         $result = $conn->query($sql);
-        header("location:../courses.php");
+        header("location:../admin/courses.php");
 
     }
 }
@@ -47,14 +47,14 @@ if(isset($_POST["edit"])){
         $course = $_POST["course_id"];
         $sql = "UPDATE students SET student_no = '$studno', name = '$name', gender = '$gender', course_id = '$course' WHERE student_id = '$id'";
         $result = $conn->query($sql);
-        header("location:../student.php");
+        header("location:../admin/student.php");
     }else if (isset($_POST["coursesEdit"])){
         $id = $_POST["coursesEdit"];
         $code = $_POST["code"];
         $name = $_POST["name"];
         $sql = "UPDATE courses SET code = '$code', name = '$name' WHERE course_id = '$id'";
         $result = $conn->query($sql);
-        header("location:../courses.php");
+        header("location:../admin/courses.php");
     }
 }
 
@@ -68,13 +68,13 @@ if(isset($_POST["delete"])){
     if($table == "courses"){
         $checkIfExisting = $conn->query("SELECT * FROM students WHERE course_id = $id");
         if(mysqli_num_rows($checkIfExisting) >= 1){
-            header("location:../courses.php?error=1");
+            header("location:../admin/courses.php?error=1");
             exit;
         }
     }
     $sql = "DELETE FROM $table WHERE $where = $id";
     $result = $conn->query($sql);
-    ($table == "students") ? header("location:../student.php") : header("location:../courses.php");
+    ($table == "students") ? header("location:../admin/student.php") : header("location:../admin/courses.php");
     
 }
 

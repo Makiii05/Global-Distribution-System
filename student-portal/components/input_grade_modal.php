@@ -1,48 +1,55 @@
-<div class="modal fade" id="inputGradeModal" tabindex="-1" aria-labelledby="inputGradeModalLabel" aria-hidden="true">
+<?PHP
+$gradeOptions = [
+    '1.00', '1.25', '1.50', '1.75', '2.00',
+    '2.25', '2.50', '2.75', '3.00', '4.00', '5.00'
+];
+?>
+
+<!-- Unique Modal per Subject -->
+<div class="modal fade" id="modal<?= $row['subject_id'] ?>" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="add.php" method="POST">
-            <div class="modal-header">
-                <h3><?= $student_name?>'s Grade</h3>
-            </div>
-            <div class="modal-body">
-                    <b>Subject Code</b>: <p><?= $row['code'] ?></p>    
+            <form action="add.php" method="post">
+                <div class="modal-header">
+                    <h3><?= htmlspecialchars($student_info['name']) ?>’s Grade</h3>
+                </div>
+                <div class="modal-body">
+                    <b>Subject Code</b>: <p><?= htmlspecialchars($row['code']) ?></p>
                     <hr>
-                    <input type='hidden' name='student_id' value="<?= $student_id?>">
+                    <input type="hidden" name="student_id" value="<?= $student_id ?>">
+                    <input type="hidden" name="semester_id" value="<?= $semester_id ?>">
+                    <input type="hidden" name="subject_id" value="<?= $row['subject_id'] ?>">
+
+                    <!-- MIDTERM -->
                     <b>Midterm Grade</b>
-                    <select name="midterm" class="form-select" require>
-                        <option value="">Select Grade</option>
-                        <option value="1.00">1.00</option>
-                        <option value="1.25">1.25</option>
-                        <option value="1.50">1.50</option>
-                        <option value="1.75">1.75</option>
-                        <option value="2.00">2.00</option>
-                        <option value="2.25">2.25</option>
-                        <option value="2.50">2.50</option>
-                        <option value="2.75">2.75</option>
-                        <option value="3.00">3.00</option>
-                        <option value="4.00">4.00</option>
-                        <option value="5.00">5.00</option>
-                    </select><b>Final Course Grade</b>
                     <select name="midterm" class="form-select">
                         <option value="">Select Grade</option>
-                        <option value="1.00">1.00</option>
-                        <option value="1.25">1.25</option>
-                        <option value="1.50">1.50</option>
-                        <option value="1.75">1.75</option>
-                        <option value="2.00">2.00</option>
-                        <option value="2.25">2.25</option>
-                        <option value="2.50">2.50</option>
-                        <option value="2.75">2.75</option>
-                        <option value="3.00">3.00</option>
-                        <option value="4.00">4.00</option>
-                        <option value="5.00">5.00</option>
+                        <?php 
+                        $midtermValue = $row['midterm']; // value from DB
+                        foreach ($gradeOptions as $grade):
+                            $selected = ($midtermValue == $grade) ? 'selected' : '';
+                        ?>
+                            <option value="<?= $grade ?>" <?= $selected ?>><?= $grade ?></option>
+                        <?php endforeach; ?>
                     </select>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" name="createGrade" class="form-control w-25 border-success text-success">Save</button>
-                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-            </div>
+
+                    <!-- FINAL COURSE GRADE -->
+                    <b>Final Course Grade</b>
+                    <select name="fcg" class="form-select">
+                        <option value="">Select Grade</option>
+                        <?php 
+                        $fcgValue = $row['fcg']; // value from DB
+                        foreach ($gradeOptions as $grade):
+                            $selected = ($fcgValue == $grade) ? 'selected' : '';
+                        ?>
+                            <option value="<?= $grade ?>" <?= $selected ?>><?= $grade ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="createGrade" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                </div>
             </form>
         </div>
     </div>

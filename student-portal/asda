@@ -1,6 +1,0 @@
-
-                                    <form action="enroll.php" method="POST" class="d-flex mx-4 gap-3">
-                                        <input type="hidden" name="student_no" value="<?= $_POST['student_no'] ?? "" ?>">
-                                        <input type="hidden" name="student_id" value="<?= $student_id?>"></td>
-                                        <input type="submit" name="enroll" value="Enroll" class="btn bg-dark text-light">
-                                    </form>
