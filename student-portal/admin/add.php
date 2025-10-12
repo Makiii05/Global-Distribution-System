@@ -1,6 +1,7 @@
 <?PHP
 require('../conn.php');
 require("../sql/check_admin.php");
+require("../sql/messages.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">

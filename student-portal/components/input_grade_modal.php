@@ -9,7 +9,7 @@ $gradeOptions = [
 <div class="modal fade" id="modal<?= $row['subject_id'] ?>" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="add.php" method="post">
+            <form action="add.php?success=2" method="post">
                 <div class="modal-header">
                     <h3><?= htmlspecialchars($student_info['name']) ?>’s Grade</h3>
                 </div>

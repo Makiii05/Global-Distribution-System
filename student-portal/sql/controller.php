@@ -18,7 +18,7 @@ if(isset($_POST["add"])){
 
         $sql = "INSERT INTO students (student_no, name, gender, course_id) VALUES ('$studno','$name','$gender','$course')";
         $result = $conn->query($sql);
-        header("location:../admin/student.php");
+        header("location:../admin/student.php?success=1");
     }else if(isset($_POST["code"])){
         $code = $_POST["code"];
         $name = $_POST["name"];
@@ -32,7 +32,7 @@ if(isset($_POST["add"])){
 
         $sql = "INSERT INTO courses (code, name) VALUES ('$code','$name')";
         $result = $conn->query($sql);
-        header("location:../admin/courses.php");
+        header("location:../admin/courses.php?success=1");
 
     }
 }
@@ -47,14 +47,14 @@ if(isset($_POST["edit"])){
         $course = $_POST["course_id"];
         $sql = "UPDATE students SET student_no = '$studno', name = '$name', gender = '$gender', course_id = '$course' WHERE student_id = '$id'";
         $result = $conn->query($sql);
-        header("location:../admin/student.php");
+        header("location:../admin/student.php?success=2");
     }else if (isset($_POST["coursesEdit"])){
         $id = $_POST["coursesEdit"];
         $code = $_POST["code"];
         $name = $_POST["name"];
         $sql = "UPDATE courses SET code = '$code', name = '$name' WHERE course_id = '$id'";
         $result = $conn->query($sql);
-        header("location:../admin/courses.php");
+        header("location:../admin/courses.php?success=2");
     }
 }
 
@@ -74,7 +74,7 @@ if(isset($_POST["delete"])){
     }
     $sql = "DELETE FROM $table WHERE $where = $id";
     $result = $conn->query($sql);
-    ($table == "students") ? header("location:../admin/student.php") : header("location:../admin/courses.php");
+    ($table == "students") ? header("location:../admin/student.php?success=3") : header("location:../admin/courses.php?success=3");
     
 }
 

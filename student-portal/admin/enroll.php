@@ -163,7 +163,7 @@ require("../components/head.php");
                                     <td>$row[unit]</td>
                                     <td>$row[semid]</td>
                                     <td>
-                                        <form action='enroll.php' method='POST' class='d-flex mx-4 gap-3'>
+                                        <form action='enroll.php?success=3' method='POST' class='d-flex mx-4 gap-3'>
                                             <input type='hidden' name='student_no' value=$_POST[student_no]>
                                             <input type='hidden' name='student_id' value=$student_id>
                                             <input type='hidden' name='subject_id' value=$row[subid]>

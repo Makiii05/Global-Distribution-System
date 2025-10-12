@@ -30,4 +30,30 @@ if (isset($_GET["error"])) {
     </div>
     ";
 }
+
+if (isset($_GET["success"])){
+    $success = $_GET["success"];
+
+    // default
+    $message = "Operation completed successfully.";
+    $class   = "success"; // green
+
+    if ($success == 1) {
+        $message = "Successfully added.";
+        $class   = "success"; // green
+    } elseif ($success == 2) {
+        $message = "Successfully updated.";
+        $class   = "success"; // green
+    } elseif ($success == 3) {
+        $message = "Successfully deleted.";
+        $class   = "success"; // green
+    }
+
+    echo "
+    <div class='container alert alert-$class alert-dismissible fade show position-absolute top-50 start-50 translate-middle w-25 text-center' role='alert'>
+        <strong>Success:</strong><br> $message
+        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+    </div>
+    ";
+}
 ?>
