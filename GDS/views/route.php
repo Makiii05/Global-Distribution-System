@@ -115,7 +115,9 @@ require("components/addRouteModal.php");
   <div class="card border-dark shadow-lg p-4 m-3" style="flex: 1; min-width: 0;">
     <h3 class="mb-4 text-dark d-flex align-items-center">
       <i class="bi bi-table me-2"></i> Flight Route Data
+      <?PHP if(!empty($_SESSION['user_aid'])):?>
       <button type="button"data-bs-toggle="modal" data-bs-target="#addRouteModal" class="btn btn-dark shadow-sm ms-auto d-flex align-items-center justify-content-center"><i class="bi bi-plus-square me-2"></i>Add Flight Route</button>
+      <?PHP endif;?>
     </h3>
     <div class="table-responsive" style="max-height: 600px; overflow-x: auto;">
       <table class="table table-bordered border-dark align-middle shadow-sm">
@@ -126,9 +128,7 @@ require("components/addRouteModal.php");
             <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-geo-alt"></i> Destination Airport</th>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-arrow-repeat"></i> Round Trip</th>
             <th style="min-width: 100px; white-space: nowrap;"><i class="bi bi-airplane"></i> Aircraft</th>
-            <?PHP if(isset($_SESSION["user_aid"])){ ?>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-gear"></i> Action</th>
-            <?PHP }?>
           </tr>
         </thead>
         <tbody>
@@ -162,9 +162,12 @@ require("components/addRouteModal.php");
             <?= getForeignValue("tblaircraft", "model", "id", $row["acid"]) ?>
           </td>
 
-          <?php if(isset($_SESSION["user_aid"]) && $_SESSION["user_aid"] == $row['aid']){ ?>
           <td class="text-center" style="white-space: nowrap;">
-            <?php include("components/action.php")?>
+            <?php 
+            if(isset($_SESSION["user_aid"]) && $_SESSION["user_aid"] == $row['aid']){            
+              include("components/action.php");
+            }
+            ?>
             <form action="<?= $base ?>Schedule" method="POST" style="display:inline;">
               <input type="hidden" name="view_schedule" value="<?= $row["id"] ?>">
               <button type="submit" class="btn fw-bold text-success p-0 border-success p-2 mx-2">
@@ -172,7 +175,6 @@ require("components/addRouteModal.php");
               </button>
             </form>
           </td>
-          <?php } ?>
         </tr>
         <?php } ?>
         </tbody>

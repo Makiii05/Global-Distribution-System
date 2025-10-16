@@ -41,7 +41,7 @@ require("../components/head.php");
                 <h4 class="card-title text-center mb-4">Sign In</h4>
                 <form action="signin.php" method="POST" autocomplete="off">
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username or Email</label>
+                        <label for="username" class="form-label">Username or Student#</label>
                         <input type="text" id="username" name="username" class="form-control border-dark" value="<?= isset($_GET['u']) ? htmlspecialchars($_GET['u']) : '' ?>" required autofocus>
                     </div>
 
@@ -55,21 +55,11 @@ require("../components/head.php");
                         Password or Username does not exist
                     </div>
                     <?php endif; ?>
-
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="1" id="remember" name="remember">
-                        <label class="form-check-label" for="remember">Remember me</label>
-                        </div>
-                        <a href="#" class="small">Forgot?</a>
-                    </div>
+                    <hr>
 
                     <button type="submit" class="btn btn-dark w-100" name="signin">Sign In</button>
                 </form>
 
-                <div class="text-center mt-3">
-                    <small>Don't have an account? <a href="#">Register</a></small>
-                </div>
             </div>
         </div>
     </div>

@@ -55,8 +55,6 @@ require("../components/head.php");
                 $fcg = $_POST['fcg'] ?? 'NULL';
                 $subject_id = (int)$_POST['subject_id'];
                 
-                echo $midterm;
-                echo $fcg;
 
                 $set = "SET midterm=$midterm, fcg=$fcg";
 

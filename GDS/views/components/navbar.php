@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-black shadow-sm">
   <div class="container">
     <!-- Brand -->
-    <a class="navbar-brand fw-bold text-white" href="<?= $base ?>/Home">Mark Anthony Lina</a>
+    <a class="navbar-brand fw-bold text-white" href="<?= $base ?>/Home">AirVia</a>
 
     <!-- Toggler -->
     <button class="navbar-toggler border-white" type="button" data-bs-toggle="collapse" 

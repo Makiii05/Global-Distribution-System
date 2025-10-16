@@ -18,6 +18,9 @@ if(isset($_POST["add"])){
 
         $sql = "INSERT INTO students (student_no, name, gender, course_id) VALUES ('$studno','$name','$gender','$course')";
         $result = $conn->query($sql);
+        $password = hash("MD5", "123");
+        $sql = "INSERT INTO users (user, pass, role) VALUES ('$studno','$password','Student')";
+        $result = $conn->query($sql);
         header("location:../admin/student.php?success=1");
     }else if(isset($_POST["code"])){
         $code = $_POST["code"];
@@ -74,11 +77,7 @@ if(isset($_POST["delete"])){
     }
     $sql = "DELETE FROM $table WHERE $where = $id";
     $result = $conn->query($sql);
+    $conn->query("DELETE FROM users WHERE user = '$_POST[studno]' AND role = 'Student'");
     ($table == "students") ? header("location:../admin/student.php?success=3") : header("location:../admin/courses.php?success=3");
     
-}
-
-//signin
-if(isset($_POST["signin"])){
-
 }

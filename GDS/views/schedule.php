@@ -194,9 +194,11 @@ $stmt->close();
         <td class="text-center" style="white-space: nowrap;">
             <?php include("components/seat.php")?>
         </td>
+        <?PHP if (isset($_SESSION["user_aid"])): ?>
         <td class="text-center" style="white-space: nowrap;">
             <?php include("components/action.php")?>
         </td>
+        <?PHP endif; ?>
         </tr>
         <?PHP } ?>
         </tbody>

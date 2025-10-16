@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 10, 2025 at 03:16 AM
+-- Generation Time: Oct 16, 2025 at 09:08 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,7 +40,7 @@ CREATE TABLE `courses` (
 INSERT INTO `courses` (`course_id`, `code`, `name`) VALUES
 (1, 'BSCS', 'Bachelor of Science in Computer Science'),
 (2, 'BSA', 'Bachelor of Science in Accountancy'),
-(3, 'BSN', 'Bachelor of Science in Nursing');
+(4, 'BSC', 'Bachelor of Science in Criminology');
 
 -- --------------------------------------------------------
 
@@ -69,6 +69,25 @@ INSERT INTO `rooms` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `semesters`
+--
+
+CREATE TABLE `semesters` (
+  `semester_id` tinyint(4) UNSIGNED NOT NULL,
+  `code` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `semesters`
+--
+
+INSERT INTO `semesters` (`semester_id`, `code`) VALUES
+(1, '1st 25-26'),
+(2, '2nd 25-26');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `students`
 --
 
@@ -85,9 +104,10 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`student_id`, `student_no`, `name`, `gender`, `course_id`) VALUES
-(1, '119', 'Candy', 'M', 2),
-(2, '120', 'Mark', 'M', 1),
-(3, '121', 'Faye', 'F', 1);
+(14, '00001', 'Mark', 'M', 1),
+(15, '00002', 'Faye', 'F', 1),
+(16, '00003', 'Nathaniel', 'M', 2),
+(17, '00004', 'Dino', 'F', 4);
 
 -- --------------------------------------------------------
 
@@ -98,21 +118,30 @@ INSERT INTO `students` (`student_id`, `student_no`, `name`, `gender`, `course_id
 CREATE TABLE `student_subjects` (
   `id` int(11) NOT NULL,
   `student_id` int(11) DEFAULT NULL,
-  `subject_id` int(11) DEFAULT NULL
+  `subject_id` int(11) DEFAULT NULL,
+  `semester_id` tinyint(3) UNSIGNED DEFAULT NULL,
+  `midterm` decimal(10,2) DEFAULT NULL,
+  `fcg` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `student_subjects`
 --
 
-INSERT INTO `student_subjects` (`id`, `student_id`, `subject_id`) VALUES
-(1, 1, 2),
-(2, 1, 3),
-(7, 2, 2),
-(14, 2, 3),
-(17, 1, 4),
-(19, 1, 1),
-(20, 2, 1);
+INSERT INTO `student_subjects` (`id`, `student_id`, `subject_id`, `semester_id`, `midterm`, `fcg`) VALUES
+(35, 14, 1, 1, NULL, NULL),
+(36, 14, 3, 1, NULL, NULL),
+(37, 14, 2, 1, NULL, NULL),
+(42, 15, 1, 1, NULL, NULL),
+(43, 15, 3, 1, NULL, NULL),
+(44, 15, 2, 1, NULL, NULL),
+(45, 15, 1, 2, NULL, NULL),
+(46, 15, 3, 2, NULL, NULL),
+(47, 15, 2, 2, NULL, NULL),
+(48, 16, 1, 2, NULL, NULL),
+(49, 16, 3, 2, NULL, NULL),
+(50, 16, 2, 2, NULL, NULL),
+(51, 15, 4, 2, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -183,7 +212,11 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `user`, `pass`, `role`) VALUES
 (1, 'admin', '0192023a7bbd73250516f069df18b500', 'Administrator'),
 (2, 'prof.jane', 'a426dcf72ba25d046591f81a5495eab7', 'Teacher'),
-(3, 'registrar', '5c769a1e38d1af34a22a4fdf3e334409', 'Registrar');
+(3, 'registrar', '5c769a1e38d1af34a22a4fdf3e334409', 'Registrar'),
+(9, '00001', '202cb962ac59075b964b07152d234b70', 'Student'),
+(10, '00002', 'bc3744cb38c6cf6b17e8814a9c2688a3', 'Student'),
+(11, '00003', '202cb962ac59075b964b07152d234b70', 'Student'),
+(12, '00004', '202cb962ac59075b964b07152d234b70', 'Student');
 
 --
 -- Indexes for dumped tables
@@ -202,6 +235,12 @@ ALTER TABLE `rooms`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `semesters`
+--
+ALTER TABLE `semesters`
+  ADD PRIMARY KEY (`semester_id`);
+
+--
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
@@ -214,7 +253,8 @@ ALTER TABLE `students`
 ALTER TABLE `student_subjects`
   ADD PRIMARY KEY (`id`),
   ADD KEY `student_id` (`student_id`),
-  ADD KEY `subject_id` (`subject_id`);
+  ADD KEY `subject_id` (`subject_id`),
+  ADD KEY `semester_id` (`semester_id`);
 
 --
 -- Indexes for table `subjects`
@@ -244,7 +284,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `course_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `course_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `rooms`
@@ -253,16 +293,22 @@ ALTER TABLE `rooms`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT for table `semesters`
+--
+ALTER TABLE `semesters`
+  MODIFY `semester_id` tinyint(4) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `student_subjects`
 --
 ALTER TABLE `student_subjects`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `subjects`
@@ -280,7 +326,7 @@ ALTER TABLE `teachers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Constraints for dumped tables
@@ -299,7 +345,8 @@ ALTER TABLE `student_subjects`
   ADD CONSTRAINT `fk_student_subjects_students` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `student_subjects` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`subject_id`),
   ADD CONSTRAINT `student_subjects_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`),
-  ADD CONSTRAINT `student_subjects_ibfk_2` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`subject_id`);
+  ADD CONSTRAINT `student_subjects_ibfk_2` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`subject_id`),
+  ADD CONSTRAINT `student_subjects_ibfk_3` FOREIGN KEY (`semester_id`) REFERENCES `semesters` (`semester_id`);
 
 --
 -- Constraints for table `subjects`

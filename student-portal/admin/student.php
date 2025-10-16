@@ -56,6 +56,7 @@ require("../components/head.php");
                                 echo "<td>$row[course_name]</td>";
                                 echo "<td class='d-flex gap-3'>
                                     <form action='../sql/controller.php' method='POST'>
+                                        <input type='hidden' name='studno' value='$row[studno]'>
                                         <input type='hidden' name='delete' value='$row[id]'>
                                         <input type='hidden' name='from' value='students'>
                                         <button class='btn border-danger' type='submit' onclick='confirm(`Are you sure to delete this data?`)'><i class='bi bi-trash3 p-1 text-danger'></i></button>

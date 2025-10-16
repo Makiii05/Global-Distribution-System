@@ -3,7 +3,7 @@ include("../sql/messages.php");
 ?>
 <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
   <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-
+  <?PHP if($_SESSION['user_role'] == 'Administrator'): ?>
     <!-- Header -->
     <a href="index.php" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
       <span class="fs-5 fw-bold d-none d-sm-inline">Admin Portal</span>
@@ -56,13 +56,41 @@ include("../sql/messages.php");
         </a>
       </li>
     </ul>
+  <?PHP else: ?>
+    
+    <!-- Header -->
+    <a href="index.php" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+      <span class="fs-5 fw-bold d-none d-sm-inline">Admin Portal</span>
+    </a>
+    <ul class="nav nav-pills flex-column mb-auto w-100" id="menu">
+      <li class="nav-item">
+        <a href="../index.php" class="nav-link text-white">
+          <i class="fs-5 bi bi-house-door-fill"></i>
+          <span class="ms-2 d-none d-sm-inline">Home</span>
+        </a>
+      </li>
+      <li>
+        <a href="grade.php" class="nav-link text-white">
+          <i class="fs-5 bi bi-journal-text"></i>
+          <span class="ms-2 d-none d-sm-inline">View Grade</span>
+        </a>
+      </li>
+      <li>
+        <a href="change_password.php" class="nav-link text-white">
+          <i class="fs-5 bi bi-key-fill"></i>
+          <span class="ms-2 d-none d-sm-inline">Change Password</span>
+        </a>
+      </li>
+    </ul>
 
+
+  <?PHP endif; ?>
     <!-- Divider -->
     <hr class="text-white w-100">
 
     <!-- Logout Button -->
     <div class="pb-3 w-100">
-      <a href="auth/signin.php" class="btn btn-danger w-100">
+      <a href="../auth/signin.php" class="btn btn-danger w-100">
         <i class="bi bi-box-arrow-right"></i>
         <span class="ms-2 d-none d-sm-inline">Logout</span>
       </a>
