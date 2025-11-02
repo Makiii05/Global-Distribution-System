@@ -1,0 +1,6 @@
+id,iata,icao,airline_name,callsign,region,comments
+1,5J,CEB,Cebu Pacific,CEBU,Philippines,Founded 1988
+2,PR,PAL,Philippine Airlines,PHILIPPINE,Philippines,Flag carrier
+3,Z2,APG,Philippines AirAsia,ASIAN SPIRIT,Philippines,Subsidiary of AirAsia
+4,RW,RPA,Royal Air Philippines,ROYAL BLUE,Philippines,Charter & scheduled ops
+5,T6,ATX,AirSWIFT,AIRSWIFT,Philippines,Boutique island carrier

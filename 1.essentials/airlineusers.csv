@@ -1,0 +1,11 @@
+id,user,pass,type,aid
+1,ceb_admin,ceb12345,admin,1
+2,ceb_ops1,opsceb01,staff,1
+3,pal_admin,paladmin22,admin,2
+4,pal_agent1,palagent88,agent,2
+5,pal_pilot1,flypal330,pilot,2
+6,airasia_admin,aa2025,admin,3
+7,airasia_ops,ops888,staff,3
+8,royair_admin,roy123,admin,4
+9,royair_agent1,royagent55,agent,4
+10,airswift_admin,swiftHR22,admin,5
