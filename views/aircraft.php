@@ -13,6 +13,7 @@ if (isset($_POST["Aircraft"])) {
 } else {
   $data = getAll("tblaircraft");
 }
+require("components/addAircraftModal.php");
 ?>
 
 <div class="d-flex flex-wrap">
@@ -65,6 +66,9 @@ if (isset($_POST["Aircraft"])) {
   <div class="card border-dark shadow-lg p-4 m-3" style="flex: 1; min-width: 0;">
     <h3 class="mb-4 text-dark d-flex align-items-center">
       <i class="bi bi-table me-2"></i> Aircraft Data
+      <?PHP if(!empty($_SESSION['user_role']) && $_SESSION['user_role'] == "admin"):?>
+      <button type="button"data-bs-toggle="modal" data-bs-target="#addAircraftModal" class="btn btn-dark shadow-sm ms-auto d-flex align-items-center justify-content-center"><i class="bi bi-plus-square me-2"></i>Add Aircraft</button>
+      <?PHP endif;?>
     </h3>
     <div class="table-responsive" style="max-height: 600px; overflow-x: auto;">
       <table class="table table-bordered border-dark align-middle shadow-sm">

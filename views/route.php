@@ -14,6 +14,10 @@ if (isset($_POST["Route"])) {
   $data = getAll("tblflightroute");
 }
 
+if (isset($_POST["insertRoute"])) {
+  insertRoute("tblflightroute", $_POST);
+  $data = getAll("tblflightroute");
+}
 
 require("components/addRouteModal.php");
 ?>
@@ -136,46 +140,48 @@ require("components/addRouteModal.php");
           <tr><td colspan="6" class="text-center text-muted">No matching records found.</td></tr>        
         <?php } ?>
         <?php while($row=$data->fetch_assoc()){ ?>
-        <tr class="table-row-hover">
-          <!-- Airline Name -->
-          <td style="white-space: nowrap;">
-            <?= getForeignValue("tblairline", "airline_name", "id", $row["aid"]) ?>
-          </td>
+          <?php if((isset($_SESSION["user_aid"]) && $_SESSION["user_aid"] == $row['aid']) || (isset($_SESSION["user_role"]) && $_SESSION["user_role"] == "admin")){ ?>        
+            <tr class="table-row-hover">
+              <!-- Airline Name -->
+              <td style="white-space: nowrap;">
+                <?= getForeignValue("tblairline", "airline_name", "id", $row["aid"]) ?>
+              </td>
 
-          <!-- Origin Airport -->
-          <td style="white-space: nowrap;">
-            <?= getForeignValue("tblairport", "airport_name", "id", $row["oapid"]) ?>
-          </td>
+              <!-- Origin Airport -->
+              <td style="white-space: nowrap;">
+                <?= getForeignValue("tblairport", "airport_name", "id", $row["oapid"]) ?>
+              </td>
 
-          <!-- Destination Airport -->
-          <td style="white-space: nowrap;">
-            <?= getForeignValue("tblairport", "airport_name", "id", $row["dapid"]) ?>
-          </td>
+              <!-- Destination Airport -->
+              <td style="white-space: nowrap;">
+                <?= getForeignValue("tblairport", "airport_name", "id", $row["dapid"]) ?>
+              </td>
 
-          <!-- Round Trip -->
-          <td style="white-space: nowrap;">
-            <?= ($row["round_trip"] == 1) ? "Yes" : "No" ?>
-          </td>
+              <!-- Round Trip -->
+              <td style="white-space: nowrap;">
+                <?= ($row["round_trip"] == 1) ? "Yes" : "No" ?>
+              </td>
 
-          <!-- Aircraft Model -->
-          <td style="white-space: nowrap;">
-            <?= getForeignValue("tblaircraft", "model", "id", $row["acid"]) ?>
-          </td>
+              <!-- Aircraft Model -->
+              <td style="white-space: nowrap;">
+                <?= getForeignValue("tblaircraft", "model", "id", $row["acid"]) ?>
+              </td>
 
-          <td class="text-center" style="white-space: nowrap;">
-            <?php 
-            if(isset($_SESSION["user_aid"]) && $_SESSION["user_aid"] == $row['aid']){            
-              include("components/action.php");
-            }
-            ?>
-            <form action="<?= $base ?>Schedule" method="POST" style="display:inline;">
-              <input type="hidden" name="view_schedule" value="<?= $row["id"] ?>">
-              <button type="submit" class="btn fw-bold text-success p-0 border-success p-2 mx-2">
-                Schedule
-              </button>
-            </form>
-          </td>
-        </tr>
+              <td class="text-center" style="white-space: nowrap;">
+                <?php 
+                if(isset($_SESSION["user_aid"]) && $_SESSION["user_aid"] == $row['aid']){            
+                  include("components/action.php");
+                }
+                ?>
+                <form action="<?= $base ?>Schedule" method="POST" style="display:inline;">
+                  <input type="hidden" name="view_schedule" value="<?= $row["id"] ?>">
+                  <button type="submit" class="btn fw-bold text-success p-0 border-success p-2 mx-2">
+                    Schedule
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <?php } ?>
         <?php } ?>
         </tbody>
       </table>

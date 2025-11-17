@@ -156,3 +156,12 @@ function generateSeatName($i, $seatsPerRow) {
     $letters = range('A', 'Z');
     return $letters[$col] . $row;
 }
+function insertRoute($table, $column){
+    global $conn;
+    $sql = "INSERT INTO $table (aid, oapid, dapid, round_trip, acid) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("iiiii", $column["airline"], $column["oapid"], $column["dapid"], $column["round_trip"], $column["acid"]);
+    $stmt->execute();
+
+    $stmt->close();
+}

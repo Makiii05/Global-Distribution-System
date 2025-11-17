@@ -1,10 +1,9 @@
 <?php
 // --- Flight Schedule Logic ---
-
-$id = $_POST["view_schedule"] ?? $_GET["view_schedule"] ?? null;
+$id = $_POST["view_schedule"] ?? "$_POST[delete]" ?? "$_POST[Edit]" ?? "";
 
 if(empty($id)) {
-    header("Location: ".$base."Route");
+    header("location: ".$base."Route");
 }
 
 if (isset($_POST["delete"])) {

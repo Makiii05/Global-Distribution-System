@@ -2,8 +2,8 @@
 <div class="modal fade" id="addRouteModal" tabindex="-1" aria-labelledby="addRouteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-white text-dark shadow-lg rounded-3">
-      <form action="../" method="post">
-
+      <form action="<?= $base ?>Route" method="POST">
+        <input type="hidden" name="insertRoute" value="<?= $_SESSION["user_aid"]?>">
         <!-- Modal Header -->
         <div class="modal-header border-0">
           <h5 class="modal-title d-flex align-items-center" id="editModalLabel">
@@ -16,7 +16,7 @@
         <div class="modal-body" id="modalBody">
             <div class="mb-2">
                 <label class="form-label fw-bold">Airline</label>
-                <input type="text" class="form-control" name="airline" value="<?= $_SESSION["user_aid"]?>" required>
+                <input type="text" class="form-control" name="airline" value="<?= $_SESSION["user_aid"]?>" readonly>
             </div>
 
             <div class="mb-2">
@@ -32,7 +32,7 @@
 
             <div class="mb-2">
                 <label class="form-label fw-bold">Destination Airport</label>
-                <select name="oapid" class="form-control" required>
+                <select name="dapid" class="form-control" required>
                 <option value="" disabled selected>-- Choose an airport --</option>
                 <?PHP $airports = $conn->query("SELECT * FROM tblairport "); ?>
                 <?PHP foreach ($airports as $airport) {?>
@@ -43,7 +43,7 @@
 
             <div class="mb-2">
                 <label class="form-label fw-bold">Round Trip</label>
-                <select name="oapid" class="form-control" required>
+                <select name="round_trip" class="form-control" required>
                     <option value="1">True</option>
                     <option value="0">False</option>
                 </select>
@@ -51,7 +51,7 @@
 
             <div class="mb-2">
                 <label class="form-label fw-bold">Aircraft</label>
-                <select name="oapid" class="form-control" required>
+                <select name="acid" class="form-control" required>
                 <option value="" disabled selected>-- Choose an aircraft --</option>
                 <?PHP $aircrafts = $conn->query("SELECT * FROM tblaircraft "); ?>
                 <?PHP foreach ($aircrafts as $aircraft) {?>
