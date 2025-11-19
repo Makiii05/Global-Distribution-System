@@ -115,46 +115,104 @@ function getForeignValue($table, $column, $idColumn, $id) {
 function createSeatPlan($fid, $aircraft_id) {
     global $conn;
 
-    // Fetch seat counts per class
-    $row = $conn->query("
-        SELECT first_class, business_class, economy_class 
-        FROM tblaircraft 
-        WHERE id = $aircraft_id
-    ")->fetch_assoc();
+    // FIX 1: Cast to int and use proper SQL parameter binding
+    $aircraft_id = (int)$aircraft_id;
+    
+    // Fetch seat configuration from tblaircraftseat
+    $sql = "SELECT
+          acs.f_col, acs.f_row, acs.f_seatplan,
+          acs.c_col, acs.c_row, acs.c_seatplan,
+          acs.y_col, acs.y_row, acs.y_seatplan
+          FROM tblaircraftseat acs
+          WHERE acs.acid = ?";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $aircraft_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
 
-    // Class configs
+    // FIX 2: Check if aircraft configuration exists
+    if (!$row) {
+        error_log("No seat configuration found for aircraft ID: $aircraft_id");
+        return false;
+    }
+
+    // Class configurations with actual seatplan data
     $classes = [
-        "First"    => ["count" => (int)$row['first_class'], "perRow" => 3],
-        "Business" => ["count" => (int)$row['business_class'], "perRow" => 4],
-        "Economy"  => ["count" => (int)$row['economy_class'], "perRow" => 6],
+        "First"    => [
+            "cols" => (int)$row['f_col'],
+            "rows" => (int)$row['f_row'],
+            "seatplan" => $row['f_seatplan']
+        ],
+        "Business" => [
+            "cols" => (int)$row['c_col'],
+            "rows" => (int)$row['c_row'],
+            "seatplan" => $row['c_seatplan']
+        ],
+        "Economy"  => [
+            "cols" => (int)$row['y_col'],
+            "rows" => (int)$row['y_row'],
+            "seatplan" => $row['y_seatplan']
+        ],
     ];
 
     $sql = "INSERT INTO tblseats (fid, ticket_no, seat_name, class, status) 
             VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
-    $seatCounter = 1; // continuous ticket number across all classes
+    $ticketCounter = 1; // Continuous ticket number across all classes
 
     foreach ($classes as $class => $data) {
-        for ($i = 1; $i <= $data['count']; $i++) {
-            $ticket_no = str_pad($seatCounter, 6, '0', STR_PAD_LEFT);
-            $seat_name = generateSeatName($i, $data['perRow']); // resets seat layout inside each class
+        $cols = $data['cols'];
+        $rows = $data['rows'];
+        $seatplan = $data['seatplan'];
+        
+        // FIX 3: Generate seats based on seatplan (only where '1' exists)
+        $seatNames = generateSeatNames($cols, $rows, $seatplan);
+        
+        foreach ($seatNames as $seatName) {
+            $ticket_no = str_pad($ticketCounter, 6, '0', STR_PAD_LEFT);
             $status = "available";
 
-            $stmt->bind_param("issss", $fid, $ticket_no, $seat_name, $class, $status);
-            $stmt->execute();
+            $stmt->bind_param("issss", $fid, $ticket_no, $seatName, $class, $status);
+            
+            if (!$stmt->execute()) {
+                error_log("Failed to insert seat: $seatName for class $class. Error: " . $stmt->error);
+            }
 
-            $seatCounter++; // keep ticket numbers unique across all seats
+            $ticketCounter++;
         }
     }
 
     $stmt->close();
+    return true;
 }
-function generateSeatName($i, $seatsPerRow) {
-    $row = ceil($i / $seatsPerRow); 
-    $col = ($i - 1) % $seatsPerRow;
+
+// FIX 4: New function that respects the seatplan layout
+function generateSeatNames($cols, $rows, $seatplan) {
+    $seatNames = [];
     $letters = range('A', 'Z');
-    return $letters[$col] . $row;
+    $position = 0;
+    
+    // Loop through each row
+    for ($row = 1; $row <= $rows; $row++) {
+        $seatLetter = 0; // Counter for consecutive seat letters (A, B, C...)
+        
+        // Loop through each column in this row
+        for ($col = 0; $col < $cols; $col++) {
+            // Check if this position has a seat (1) in the seatplan
+            if (isset($seatplan[$position]) && $seatplan[$position] === '1') {
+                // Generate seat name: Consecutive Letter + Row Number
+                $seatNames[] = $letters[$seatLetter] . $row;
+                $seatLetter++; // Move to next letter for next seat
+            }
+            $position++;
+        }
+    }
+    
+    return $seatNames;
 }
 function insertRoute($table, $column){
     global $conn;

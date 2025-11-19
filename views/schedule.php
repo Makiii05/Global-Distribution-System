@@ -23,7 +23,7 @@ if (isset($_POST["submit"])) {
 
 $route = $conn->query("SELECT * FROM tblflightroute WHERE id = $id")->fetch_assoc();
 // First fetch airline ID, origin airport, destination airport from route
-$sql = "SELECT a.airline_name, o.airport_name AS origin, d.airport_name AS dest, c.model AS aircraft
+$sql = "SELECT a.airline_name, o.airport_name AS origin, d.airport_name AS dest, c.model AS aircraft, c.id AS acid
         FROM tblflightroute fr
         LEFT JOIN tblairline a ON fr.aid = a.id
         LEFT JOIN tblairport o ON fr.oapid = o.id
@@ -33,9 +33,11 @@ $sql = "SELECT a.airline_name, o.airport_name AS origin, d.airport_name AS dest,
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $route["id"]);
 $stmt->execute();
-$stmt->bind_result($airlineName, $origin, $dest, $aircraft);
+$stmt->bind_result($airlineName, $origin, $dest, $aircraft, $acid);
 $stmt->fetch();
 $stmt->close();
+require("components/scheduleLayoutModal.php");
+
 ?>
 
 

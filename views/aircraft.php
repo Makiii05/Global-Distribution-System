@@ -11,8 +11,34 @@ if (isset($_POST["Edit"])) {
 if (isset($_POST["Aircraft"])) {
   $data = search("tblaircraft", $_POST);
 } else {
-  $data = getAll("tblaircraft");
+    $sql = "SELECT
+          ac.id AS id,
+          ac.iata AS iata,
+          ac.icao AS icao,
+          ac.model AS model,
+          acs.f_no AS first_class,
+          acs.y_no AS business_class,
+          acs.c_no AS economy_class,
+          acs.f_col AS f_col,
+          acs.f_row AS f_row,
+          acs.f_no AS f_no,
+          acs.f_seatplan AS f_seatplan,
+          acs.f_orientation AS f_orientation,
+          acs.y_col AS y_col,
+          acs.y_row AS y_row,
+          acs.y_no AS y_no,
+          acs.y_seatplan AS y_seatplan,
+          acs.y_orientation AS y_orientation,
+          acs.c_col AS c_col,
+          acs.c_row AS c_row,
+          acs.c_no AS c_no,
+          acs.c_seatplan AS c_seatplan,
+          acs.c_orientation AS c_orientation
+          FROM tblaircraft ac
+          JOIN tblaircraftseat acs ON acs.acid = ac.id";
+    $data = $conn->query($sql);
 }
+require("components/layoutModal.php");
 require("components/addAircraftModal.php");
 ?>
 
@@ -77,9 +103,10 @@ require("components/addAircraftModal.php");
             <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-upc-scan"></i> IATA</th>
             <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-upc"></i> ICAO</th>
             <th style="min-width: 200px; white-space: nowrap;"><i class="bi bi-airplane"></i> Model</th>
-            <th style="min-width: 200px; white-space: nowrap;"><i class="bi bi-airplane"></i> First Class</th>
-            <th style="min-width: 200px; white-space: nowrap;"><i class="bi bi-airplane"></i> Business Class</th>
-            <th style="min-width: 200px; white-space: nowrap;"><i class="bi bi-airplane"></i> Economy Class</th>
+            <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-airplane"></i> First Class</th>
+            <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-airplane"></i> Business Class</th>
+            <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-airplane"></i> Economy Class</th>
+            <th style="min-width: 80px; white-space: nowrap;"><i class="bi bi-grid-3x2-gap"></i> Layout</th>
             <?PHP if(isset($_SESSION["user_role"]) && $_SESSION["user_role"]=="admin"){ ?>
             <th style="min-width: 120px; white-space: nowrap;"><i class="bi bi-gear"></i> Action</th>
             <?PHP }?>
@@ -97,6 +124,12 @@ require("components/addAircraftModal.php");
             <td style="white-space: nowrap;"><?= $row["first_class"] ?></td>
             <td style="white-space: nowrap;"><?= $row["business_class"] ?></td>
             <td style="white-space: nowrap;"><?= $row["economy_class"] ?></td>
+            <td style="white-space: nowrap;">
+              <button type="button" class="btn btn-link edit-btn border-dark p-2 mx-2" 
+                onclick='modalLayout(<?= json_encode($row) ?>)'>
+                <i class="bi bi-airplane text-dark"></i>
+              </button>
+            </td>
             <?PHP if(isset($_SESSION["user_role"]) && $_SESSION["user_role"]=="admin"){ ?>
             <td class="text-center" style="white-space: nowrap;">
               <?php include("components/action.php")?>
