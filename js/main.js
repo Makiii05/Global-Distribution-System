@@ -211,7 +211,6 @@ function modalScheduleLayout(rowData, seatStatus){
             seat.classList.add("seat", "border");
 
             if (seatplan[i] === "1") {
-                console.log(seatStatusMap[curSeatIndex])
                 let seatInfo = seatStatusMap[curSeatIndex]
                 if(seatInfo.status === "unavailable"){
                   seat.classList.add(`bg-${colorClass}`, `text-white`)
