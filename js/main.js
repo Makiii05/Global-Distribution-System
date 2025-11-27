@@ -59,22 +59,21 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-//show nodal 
+//show edit modal 
 function modal(rowData) { 
     let modalBody = document.querySelector("#modalBody"); 
     let idCon = document.querySelector("#idCon"); 
     modalBody.innerHTML = ""; 
 
-    // get id (assuming first key in rowData is 'id') 
-    let id = rowData.id || Object.values(rowData)[0]; 
+    let id = rowData.id; 
     idCon.value = id; 
     
     // skip id in form fields 
     let entries = Object.entries(rowData).slice(1); 
     entries.forEach(([key, value]) => { 
-        
+        title = key.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
         let html = `
-        <div class="mb-2"> <label class="form-label fw-bold">${key.toUpperCase()}
+        <div class="mb-2"> <label class="form-label fw-bold">${title}
         </label> <input type="text" class="form-control" name="${key}" value="${value}"> </div>`; 
         modalBody.innerHTML += html; 
     }); 
@@ -94,16 +93,58 @@ function modalSeat(rowData, type) {
     modalLabel.innerHTML = "";
 
     if (type == "price") {
+      
       modalLabel.innerHTML = `<i class="bi bi-currency-dollar me-2 text-dark"></i> View Price`;
       modalBody.innerHTML = `
-        <table class="table table-bordered border-dark align-middle shadow-sm rounded-3">
+        <table class="table table-bordered border-dark align-middle shadow-sm rounded-3 me-3">
           <thead class="table-dark sticky-top">
+            <tr><th colspan=3 class="text-center">BASE PRICE</th></tr>
             <tr><th>First Class Price</th><th>Business Class Price</th><th>Economy Class Price</th></tr>
           </thead>
           <tbody>
-            <tr><td>$${rowData["fclass_price"]}</td><td>$${rowData['cclass_price']}</td><td>$${rowData['yclass_price']}</td></tr>
+            <tr>
+            <td>$${parseFloat(rowData["fclass_price"]).toFixed(2)}</td>
+            <td>$${parseFloat(rowData['cclass_price']).toFixed(2)}</td>
+            <td>$${parseFloat(rowData['yclass_price']).toFixed(2)}</td></tr>
           </tbody>
-        </table>`;
+        </table>
+        <table class="table table-bordered border-dark align-middle shadow-sm rounded-3 me-3">
+          <thead class="table-dark sticky-top">
+            <tr><th colspan=3 class="text-center">INFLATION (+${rowData["inflation"]}%)</th></tr>
+            <tr><th>First Class Price</th><th>Business Class Price</th><th>Economy Class Price</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+            <td>+$${parseFloat((rowData["inflation"])/100*rowData["fclass_price"]).toFixed(2)}</td>
+            <td>+$${parseFloat((rowData["inflation"])/100*rowData["cclass_price"]).toFixed(2)}</td>
+            <td>+$${parseFloat((rowData["inflation"])/100*rowData["yclass_price"]).toFixed(2)}</td></tr>
+          </tbody>
+        </table>
+        <table class="table table-bordered border-dark align-middle shadow-sm rounded-3 me-3">
+          <thead class="table-dark sticky-top">
+            <tr><th colspan=3 class="text-center">WINDOW FEE (+${rowData["window_fee_percent"]}%)</th></tr>
+            <tr><th>First Class Price</th><th>Business Class Price</th><th>Economy Class Price</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+            <td>+$${parseFloat((rowData["window_fee_percent"])/100*rowData["fclass_price"]).toFixed(2)}</td>
+            <td>+$${parseFloat((rowData["window_fee_percent"])/100*rowData["cclass_price"]).toFixed(2)}</td>
+            <td>+$${parseFloat((rowData["window_fee_percent"])/100*rowData["yclass_price"]).toFixed(2)}</td></tr>
+          </tbody>
+        </table>
+        <table class="table table-bordered border-dark align-middle shadow-sm rounded-3 me-3">
+          <thead class="table-dark sticky-top">
+            <tr><th colspan=3 class="text-center">AISLE FEE (+${rowData["aisle_fee_percent"]}%)</th></tr>
+            <tr><th>First Class Price</th><th>Business Class Price</th><th>Economy Class Price</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+            <td>+$${parseFloat((rowData["aisle_fee_percent"])/100*rowData["fclass_price"]).toFixed(2)}</td>
+            <td>+$${parseFloat((rowData["aisle_fee_percent"])/100*rowData["cclass_price"]).toFixed(2)}</td>
+            <td>+$${parseFloat((rowData["aisle_fee_percent"])/100*rowData["yclass_price"]).toFixed(2)}</td></tr>
+          </tbody>
+        </table>
+        `;
     }else{
       modalBody.innerHTML = "";
       let table = `<table class="table table-bordered">
@@ -137,17 +178,17 @@ function modalSeat(rowData, type) {
 
 // show layout modal
 function modalLayout(rowData) {
-
-    console.log(rowData);
-
     // Helper: draw 1 class layout
     function drawSection(prefix, colorClass) {
         const cols = rowData[`${prefix}_col`];
         const rows = rowData[`${prefix}_row`];
         const seatplan = rowData[`${prefix}_seatplan`];
         const ort = rowData[`${prefix}_orientation`]; // front/middle/back
+        var seatname = generateSeatNames(cols, rows, seatplan)
 
+        let className = prefix == "f" ? "FIRST" : (prefix == "c" ? "BUSINESS" : "ECONOMY") ;
         const container = document.getElementById(`${ort}_section`);
+        document.getElementById(`${ort}_text`).innerHTML = `${className.toUpperCase()} CLASS`;
         container.innerHTML = "";
 
         // Apply grid sizes
@@ -155,14 +196,15 @@ function modalLayout(rowData) {
         container.style.gridTemplateRows = `repeat(${rows}, auto)`;
 
         const totalSeats = cols * rows;
-
+        currIndex = 0
         for (let i = 0; i < totalSeats; i++) {
             const seat = document.createElement("div");
             seat.classList.add("seat", "border");
 
             if (seatplan[i] === "1") {
-                // SPECIAL color (matches PHP)
                 seat.classList.add(colorClass, "border-3");
+                seat.innerText = `${seatname[currIndex]}`;
+                currIndex++
             } else {
                 seat.classList.add("border-secondary");
             }
@@ -191,6 +233,7 @@ function modalScheduleLayout(rowData, seatStatus){
         const ort = rowData[`${prefix}_orientation`]; // front/middle/back
 
         const container = document.getElementById(`${ort}_section`);
+        document.getElementById(`${ort}_text`).innerHTML = `${className.toUpperCase()} CLASS`;
         container.innerHTML = "";
 
         // Apply grid sizes
@@ -205,6 +248,15 @@ function modalScheduleLayout(rowData, seatStatus){
             seatStatusMap.push(seat);
           }
         });
+        
+        number_aisle = 0;
+        for (let i = 0; i < cols; i++) {
+          if(seatplan[i] === "0")
+            number_aisle ++;
+        }
+
+        last_seat = seatStatusMap[cols - number_aisle - 1 ].seat_name[0]
+        
         let curSeatIndex = 0;
         for (let i = 0; i < totalSeats; i++) {
             const seat = document.createElement("div");
@@ -212,12 +264,28 @@ function modalScheduleLayout(rowData, seatStatus){
 
             if (seatplan[i] === "1") {
                 let seatInfo = seatStatusMap[curSeatIndex]
+
+                inflated = (parseFloat(seatInfo.inflation)/100)*parseFloat(seatInfo.f_price)
+                if(seatInfo.seat_name[0] === "A" || seatInfo.seat_name[0] == last_seat ) { 
+                  addFee = `Add Fee(Window Seat): ${seatInfo.window_fee}%\n`
+                  priceAddFee = ` | +Add Fee`
+                  price = parseFloat(seatInfo.f_price) + inflated + ((parseFloat(seatInfo.window_fee)/100)*inflated)
+                } else if(seatplan[i - 1] === "0" || seatplan[i + 1] === "0") {
+                  addFee = `Add Fee(Aisle Seat): ${seatInfo.aisle_fee}%\n`
+                  priceAddFee = ` | +Add Fee`
+                  price = parseFloat(seatInfo.f_price) + inflated + ((parseFloat(seatInfo.aisle_fee)/100)*inflated)
+                } else {
+                  addFee = ""
+                  priceAddFee = ``
+                  price = parseFloat(seatInfo.f_price) + ((parseFloat(seatInfo.inflation)/100)*parseFloat(seatInfo.f_price))
+                }
+
                 if(seatInfo.status === "unavailable"){
                   seat.classList.add(`bg-${colorClass}`, `text-white`)
-                  seat.title = `Seat Name: ${seatInfo.seat_name}\nClass: ${seatInfo.class}\nStatus: Occupied\nPassenger: ${seatInfo.passenger_name}\nTicket: ${seatInfo.ticket_no}\nAgency Contact: ${seatInfo.contact_agency}\nPassenger Contact: ${seatInfo.contact_passenger}`
+                  seat.title = `SEAT INFORMATION\nSeat Name: ${seatInfo.seat_name}\nClass: ${seatInfo.class}\nStatus: Occupied\n\nTICKET INFORMATION\nTicket: ${seatInfo.ticket_no}\nInflation: ${seatInfo.inflation}%\n${addFee}Price(+Inflation ${priceAddFee}): $${price}\n\nPASSENGER INFORMATION\nPassenger: ${seatInfo.passenger_name}\nAgency Contact: ${seatInfo.contact_agency}\nPassenger Contact: ${seatInfo.contact_passenger}`
                 }else{
                   seat.classList.add(`border-${colorClass}`, "border-3");
-                  seat.title = `Seat Name: ${seatInfo.seat_name}\nClass: ${seatInfo.class}\nStatus: Available`
+                  seat.title = `SEAT INFORMATION\nSeat Name: ${seatInfo.seat_name}\nClass: ${seatInfo.class}\nStatus: Available\n\nTICKET INFORMATION\nTicket: ${seatInfo.ticket_no}\nInflation: ${seatInfo.inflation}%\n${addFee}Price(+Inflation ${priceAddFee}): $${price}`
                 }
                 seat.textContent = seatInfo.seat_name;
                 curSeatIndex++;
@@ -237,6 +305,29 @@ function modalScheduleLayout(rowData, seatStatus){
 
     const myModal = new bootstrap.Modal(document.getElementById('scheduleLayoutModal'));
     myModal.show();
+}
+
+function generateSeatNames(cols, rows, seatplan) {
+    const seatNames = [];
+    const letters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+    let position = 0;
+
+    // Loop through each row
+    for (let row = 1; row <= rows; row++) {
+        let seatLetter = 0; // Counter for A, B, C...
+
+        // Loop through each column
+        for (let col = 0; col < cols; col++) {
+            // Check if this position has a seat
+            if (seatplan[position] === '1') {
+                seatNames.push(letters[seatLetter] + row);
+                seatLetter++; // Move to next seat letter
+            }
+            position++;
+        }
+    }
+
+    return seatNames;
 }
 
 // login toggle

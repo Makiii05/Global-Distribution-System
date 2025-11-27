@@ -1,7 +1,6 @@
 <?php
 // --- Flight Schedule Logic ---
-$id = $_POST["view_schedule"] ?? "$_POST[delete]" ?? "$_POST[Edit]" ?? "";
-
+$id = (int)$_POST["view_schedule"];
 if(empty($id)) {
     header("location: ".$base."Route");
 }
@@ -11,11 +10,11 @@ if (isset($_POST["delete"])) {
 }
 
 if (isset($_POST["Edit"])) {
-    $id = $_POST["Edit"];
-    editData("tblflightschedule", $_POST, $id);
+    $edit_id = $_POST["Edit"];
+    editData("tblflightschedule", $_POST, $edit_id);
 }
 
-if (isset($_POST["submit"])) {
+if (isset($_POST["search_schedule"])) {
     $data = schedAction("tblflightschedule", $_POST);
 } else {
     $data = getSched("tblflightschedule", $id);
@@ -59,7 +58,7 @@ require("components/scheduleLayoutModal.php");
     <form action="<?= $base ?>Schedule" method="POST">
 
       <input type="hidden" name="view_schedule" value="<?= $id ?>">
-      <input type="hidden" name="submit" id="submit_inp" value="search_schedule"">
+      <input type="hidden" name="search_schedule" id="submit_inp" value="search_schedule"">
 
       <div class="mb-3">
         <label class="form-label fw-bold text-dark"><i class="bi bi-calendar-date me-1"></i> Date Departure</label>

@@ -8,17 +8,6 @@ if (isset($_POST["Edit"])) {
     editData("tblaircraft", $_POST, $id);
 }
 
-if (isset($_POST["insertAircraft"])){
-    if (strlen($_POST["f_seatplan"]) == (int)$_POST["f_col"] * (int)$_POST["f_row"]
-    && strlen($_POST["c_seatplan"]) == (int)$_POST["c_col"] * (int)$_POST["c_row"]
-    && strlen($_POST["y_seatplan"]) == (int)$_POST["y_col"] * (int)$_POST["y_row"]
-    ) {
-      $conn->query("INSERT INTO tblaircraft (iata, icao, model) VALUES ('$_POST[iata]', '$_POST[icao]', '$_POST[model]')");
-      $acid = $conn->insert_id;
-      $conn->query("INSERT INTO tblaircraftseat (acid, f_col, f_row, f_seatplan, f_orientation, c_col, c_row, c_seatplan, c_orientation, y_col, y_row, y_seatplan, y_orientation)
-      VALUES ($acid, $_POST[f_col], $_POST[f_row], '$_POST[f_seatplan]', '$_POST[f_orientation]', $_POST[c_col], $_POST[c_row], '$_POST[c_seatplan]', '$_POST[c_orientation]', $_POST[y_col], $_POST[y_row], '$_POST[y_seatplan]', '$_POST[y_orientation]')");
-    }
-}
 
 if (isset($_POST["Aircraft"])) {
   $data = search("tblaircraft", $_POST);
@@ -50,6 +39,21 @@ if (isset($_POST["Aircraft"])) {
           JOIN tblaircraftseat acs ON acs.acid = ac.id";
     $data = $conn->query($sql);
 }
+
+if (isset($_POST["insertAircraft"])){
+    if (strlen($_POST["f_seatplan"]) == (int)$_POST["f_col"] * (int)$_POST["f_row"]
+    && strlen($_POST["c_seatplan"]) == (int)$_POST["c_col"] * (int)$_POST["c_row"]
+    && strlen($_POST["y_seatplan"]) == (int)$_POST["y_col"] * (int)$_POST["y_row"]
+    ) {
+      $conn->query("INSERT INTO tblaircraft (iata, icao, model) VALUES ('$_POST[iata]', '$_POST[icao]', '$_POST[model]')");
+      $acid = $conn->insert_id;
+      $conn->query("INSERT INTO tblaircraftseat (acid, f_col, f_row, f_seatplan, f_orientation, c_col, c_row, c_seatplan, c_orientation, y_col, y_row, y_seatplan, y_orientation)
+      VALUES ($acid, $_POST[f_col], $_POST[f_row], '$_POST[f_seatplan]', '$_POST[f_orientation]', $_POST[c_col], $_POST[c_row], '$_POST[c_seatplan]', '$_POST[c_orientation]', $_POST[y_col], $_POST[y_row], '$_POST[y_seatplan]', '$_POST[y_orientation]')");
+      $firstFour = array_slice($_POST, 0, 4, true);
+      $data = search("tblaircraft", $firstFour );
+    }
+}
+
 require("components/layoutModal.php");
 require("components/addAircraftModal.php");
 ?>

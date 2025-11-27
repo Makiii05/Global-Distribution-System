@@ -14,6 +14,9 @@
 
         <!-- Hidden ID -->
         <input type="hidden" name="Edit" value="" id="idCon">
+        <?PHP if(isset($_POST["view_schedule"])): ?>
+        <input type="hidden" name="view_schedule" value="<?= $_POST["view_schedule"] ?>">
+        <?PHP endif; ?>
 
         <!-- Modal Body -->
         <div class="modal-body" id="modalBody">

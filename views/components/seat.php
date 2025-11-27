@@ -28,7 +28,26 @@ $sql = "SELECT
       JOIN tblaircraftseat acs ON acs.acid = ac.id
       WHERE ac.id = $acid";
 $seatLayout = $conn->query($sql)->fetch_assoc();
-$seatStatus = $conn->query("SELECT * FROM tblseats WHERE fid = $row[id]")->fetch_all(MYSQLI_ASSOC);
+$seatStatus = $conn->query("SELECT 
+                  s.id AS id, 
+                  s.fid AS fid, 
+                  s.ticket_no AS ticket_no, 
+                  s.seat_name AS seat_name, 
+                  s.class AS class, 
+                  s.status AS status, 
+                  s.passenger_name AS passenger_name, 
+                  s.contact_agency AS contact_agency, 
+                  s.contact_passenger AS contact_passenger,
+                  fs.fclass_price AS f_price,
+                  fs.cclass_price AS c_price,
+                  fs.yclass_price AS y_price,
+                  fs.inflation AS inflation,
+                  fs.window_fee_percent AS window_fee,
+                  fs.aisle_fee_percent AS aisle_fee
+                  FROM tblseats s 
+                  JOIN tblflightschedule fs ON fs.id = s.fid 
+                  WHERE s.fid = $row[id]
+                  ")->fetch_all(MYSQLI_ASSOC);
 
 $seatPlan = [];
 while ($seat = $seatPlanResult->fetch_assoc()) {

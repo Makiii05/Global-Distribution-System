@@ -19,6 +19,7 @@ function search($table, $where){
     global $conn;
 
     if(count($where) > 1){
+        $copy = $where;
         // remove first element
         array_shift($where);
 
@@ -30,8 +31,21 @@ function search($table, $where){
 
         // join with AND
         $condi = implode(" AND ", $conditions);
-        $sql = "SELECT * FROM $table WHERE $condi";
-        $result = $conn->query($sql);    
+        $select = "*";
+        $join = "";
+        if(isset($copy['insertAircraft']) || isset($copy['Aircraft'])){
+            $select = "
+                ac.id AS id, ac.iata AS iata, ac.icao AS icao, ac.model AS model,
+                acs.f_no AS first_class,
+                acs.c_no AS business_class,
+                acs.y_no AS economy_class,
+                acs.f_col AS f_col, acs.f_row AS f_row, acs.f_no AS f_no, acs.f_seatplan AS f_seatplan, acs.f_orientation AS f_orientation,
+                acs.y_col AS y_col, acs.y_row AS y_row, acs.y_no AS y_no, acs.y_seatplan AS y_seatplan, acs.y_orientation AS y_orientation,
+                acs.c_col AS c_col, acs.c_row AS c_row, acs.c_no AS c_no, acs.c_seatplan AS c_seatplan, acs.c_orientation AS c_orientation";
+            $join = "ac JOIN tblaircraftseat acs ON acs.acid = ac.id";
+        }
+        $sql = "SELECT $select FROM $table $join WHERE $condi";
+        $result = $conn->query($sql);
         return $result;
     } else {
         return getAll($table);
@@ -80,6 +94,8 @@ function editData($table, $set, $id){
     global $conn;
     // remove first element
     array_shift($set);
+    if($table == "tblflightschedule")
+        array_shift($set);
 
     // build key = value pairs
     $updates = [];
@@ -189,8 +205,6 @@ function createSeatPlan($fid, $aircraft_id) {
     $stmt->close();
     return true;
 }
-
-// FIX 4: New function that respects the seatplan layout
 function generateSeatNames($cols, $rows, $seatplan) {
     $seatNames = [];
     $letters = range('A', 'Z');

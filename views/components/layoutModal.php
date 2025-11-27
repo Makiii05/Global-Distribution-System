@@ -55,15 +55,15 @@
 
                     <div class="border border-2 p-3 bg-white rounded shadow-sm text-center">
                         <!-- FRONT -->
-                        <label class="text-secondary small fw-bold">FRONT SECTION</label>
+                        <label id="front_text" class="text-secondary small fw-bold">FRONT SECTION</label>
                         <div id="front_section" class="seat-section mb-4"></div>
 
                         <!-- MIDDLE -->
-                        <label class="text-secondary small fw-bold">MIDDLE SECTION</label>
+                        <label id="middle_text" class="text-secondary small fw-bold">MIDDLE SECTION</label>
                         <div id="middle_section" class="seat-section mb-4"></div>
 
                         <!-- BACK -->
-                        <label class="text-secondary small fw-bold">BACK SECTION</label>
+                        <label id="back_text" class="text-secondary small fw-bold">BACK SECTION</label>
                         <div id="back_section" class="seat-section mb-4"></div>
                     </div>
                 </div>

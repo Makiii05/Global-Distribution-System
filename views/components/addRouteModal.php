@@ -14,10 +14,7 @@
 
         <!-- Modal Body -->
         <div class="modal-body" id="modalBody">
-            <div class="mb-2">
-                <label class="form-label fw-bold">Airline</label>
-                <input type="text" class="form-control" name="airline" value="<?= $_SESSION["user_aid"]?>" readonly>
-            </div>
+            <input type="hidden" class="form-control" name="airline" value="<?= $_SESSION["user_aid"]?>" readonly>
 
             <div class="mb-2">
                 <label class="form-label fw-bold">Origin Airport</label>
@@ -44,8 +41,8 @@
             <div class="mb-2">
                 <label class="form-label fw-bold">Round Trip</label>
                 <select name="round_trip" class="form-control" required>
-                    <option value="1">True</option>
-                    <option value="0">False</option>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
                 </select>
             </div>
 
