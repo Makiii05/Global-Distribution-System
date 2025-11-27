@@ -23,3 +23,38 @@
   color: black !important;
   border-radius: .3rem;
 }
+    /* New Grid Layout for the container */
+    .seat-grid-container {
+        display: grid;
+        gap: 5px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    /* Style for the Checkbox Headers */
+    .grid-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        background-color: #f8f9fa;
+        width: 30px; 
+        height: 30px;
+        border-radius: 4px;
+    }
+
+    /* Style for the actual Seat */
+    .seat {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #6c757d;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+
+    .seat.selected {
+        background-color: #198754 !important; /* Green */
+        border-color: #198754 !important;
+    }
