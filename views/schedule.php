@@ -140,7 +140,7 @@ require("components/scheduleLayoutModal.php");
         </div>
       </div>
 
-      <button type="submit" id="submit_btn" value="search_schedule" class="btn btn-dark shadow-sm w-100 d-flex align-items-center justify-content-center">
+      <button type="submit" name="submit" id="submit_btn" value="search_schedule" class="btn btn-dark shadow-sm w-100 d-flex align-items-center justify-content-center">
         <i class='bi bi-search me-1'></i> Search
       </button>
     </form>
